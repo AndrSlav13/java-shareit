@@ -42,7 +42,7 @@ public class ItemServiceImpl implements ItemService {
         Item it = itemStore.getItemById(itemId);
         if (it == null)
             throw new HttpCustomException(HttpStatus.NOT_FOUND, "Item id=" + itemId + " not found");
-        if (it.getOwnerId() != ownerId)
+        if (!it.getOwnerId().equals(ownerId))
             throw new HttpCustomException(HttpStatus.NOT_FOUND, "Item id=" + itemId + " is not at the User id=" + ownerId);
         item.setId(itemId);
         return ItemDTO.Controller.Mapper.toReturnItemDTO(itemStore.updateItem(ItemDTO.Database.Mapper.toDBItemDTO(item)));

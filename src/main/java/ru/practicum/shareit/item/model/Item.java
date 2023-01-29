@@ -20,7 +20,7 @@ public class Item {
     @Override
     public boolean equals(Object o) {
         if (o == null || o.getClass() != this.getClass()) return false;
-        if (this == o || this.getId() == ((Item) o).getId()) return true;
+        if (this == o || this.getId().equals(((Item) o).getId())) return true;
         return false;
     }
 

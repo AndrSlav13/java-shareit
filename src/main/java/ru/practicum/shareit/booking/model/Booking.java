@@ -21,7 +21,7 @@ public class Booking {
     @Override
     public boolean equals(Object o) {
         if (o == null || o.getClass() != this.getClass()) return false;
-        if (this == o || this.getId() == ((Booking) o).getId()) return true;
+        if (this == o || this.getId().equals(((Booking) o).getId())) return true;
         if (start.isAfter(((Booking) o).getStart()) && start.isBefore(((Booking) o).getEnd()) ||
                 end.isAfter(((Booking) o).getStart()) && end.isBefore(((Booking) o).getEnd()) ||
                 start.isBefore(((Booking) o).getStart()) && end.isAfter(((Booking) o).getEnd())

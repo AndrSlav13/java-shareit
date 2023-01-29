@@ -29,7 +29,7 @@ public class ItemStoreImpl implements ItemStore {
     @Override
     public List<Item> getAllItems(Integer ownerId) {
         return itemStore.values().stream()
-                .filter(item -> item.getOwnerId() == ownerId)
+                .filter(item -> item.getOwnerId().equals(ownerId))
                 .map(itemDB -> ItemDTO.Database.Mapper.toItem(itemDB))
                 .collect(Collectors.toList());
     }
