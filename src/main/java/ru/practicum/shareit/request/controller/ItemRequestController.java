@@ -19,6 +19,6 @@ public class ItemRequestController {
 
     @PostMapping
     public Integer addRequest(@RequestBody ItemRequestDTO.NewReturnItemRequestDTO requestDTO) {
-        return requestService.addRequest(ItemRequestDTO.Mapper.ToItemRequest(requestDTO));
+        return requestService.addRequest(ItemRequestDTO.Mapper.toItemRequest(requestDTO));
     }
 }

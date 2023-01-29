@@ -24,7 +24,7 @@ public class UserController {
     @ResponseBody
     public UserDTO.Controller.ReturnUserDTO getUserById(@PathVariable(value = "id") Integer idUser,
                                                         @RequestBody @Valid UserDTO.Controller.NewUserDTO userDTO) {
-        return userService.updateUserById(UserDTO.Controller.Mapper.ToUser(userDTO, idUser));
+        return userService.updateUserById(UserDTO.Controller.Mapper.toUser(userDTO, idUser));
     }
 
     @GetMapping
@@ -36,7 +36,7 @@ public class UserController {
     @PostMapping
     @ResponseBody
     public UserDTO.Controller.ReturnUserDTO addUser(@RequestBody @Valid UserDTO.Controller.NewUserDTO user) {
-        return userService.addUser(UserDTO.Controller.Mapper.ToUser(user));
+        return userService.addUser(UserDTO.Controller.Mapper.toUser(user));
     }
 
     @DeleteMapping(path = "/{id}")

@@ -24,7 +24,7 @@ public class UserStoreImpl implements UserStore {
     public User getUserById(Integer id) {
         if (!userStore.containsKey(id)) throw new HttpCustomException(HttpStatus.NOT_FOUND, this.getClass().toString());
 
-        return UserDTO.Database.Mapper.ToUser(userStore.get(id));
+        return UserDTO.Database.Mapper.toUser(userStore.get(id));
     }
 
     @Override
@@ -33,13 +33,13 @@ public class UserStoreImpl implements UserStore {
         Integer cnt = count.getAndIncrement();
         userDTO.setId(cnt);
         userStore.put(cnt, userDTO);
-        return UserDTO.Database.Mapper.ToUser(userDTO);
+        return UserDTO.Database.Mapper.toUser(userDTO);
     }
 
     @Override
     public List<User> getAllUsers() {
         return userStore.values().stream()
-                .map(userDTO -> UserDTO.Database.Mapper.ToUser(userDTO))
+                .map(userDTO -> UserDTO.Database.Mapper.toUser(userDTO))
                 .collect(Collectors.toList());
     }
 
@@ -51,7 +51,7 @@ public class UserStoreImpl implements UserStore {
         if (userDTO.getEmail() != null) usr.setEmail(userDTO.getEmail());
         if (userDTO.getName() != null) usr.setName(userDTO.getName());
 
-        return UserDTO.Database.Mapper.ToUser(userStore.get(userDTO.getId()));
+        return UserDTO.Database.Mapper.toUser(userStore.get(userDTO.getId()));
     }
 
     @Override

@@ -19,30 +19,30 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserDTO.Controller.ReturnUserDTO getUserById(Integer id) {
-        return UserDTO.Controller.Mapper.ToReturnUserDTO(userStore.getUserById(id));
+        return UserDTO.Controller.Mapper.toReturnUserDTO(userStore.getUserById(id));
     }
 
     @Override
     public UserDTO.Controller.ReturnUserDTO addUser(User user) {
-        return UserDTO.Controller.Mapper.ToReturnUserDTO(userStore.addUser(UserDTO.Database.Mapper.ToDBUserDTO(user)));
+        return UserDTO.Controller.Mapper.toReturnUserDTO(userStore.addUser(UserDTO.Database.Mapper.toDBUserDTO(user)));
     }
 
     @Override
     public UserDTO.Controller.ReturnUserDTO updateUserById(User user) {
-        return UserDTO.Controller.Mapper.ToReturnUserDTO(userStore.updateUser(UserDTO.Database.Mapper.ToDBUserDTO(user)));
+        return UserDTO.Controller.Mapper.toReturnUserDTO(userStore.updateUser(UserDTO.Database.Mapper.toDBUserDTO(user)));
     }
 
     @Override
     public List<UserDTO.Controller.ReturnUserDTO> getAllUsers() {
         return userStore.getAllUsers().stream()
-                .map(user -> UserDTO.Controller.Mapper.ToReturnUserDTO(user))
+                .map(user -> UserDTO.Controller.Mapper.toReturnUserDTO(user))
                 .collect(Collectors.toList());
     }
 
     @Override
     public List<UserDTO.Controller.ReturnUserDTO> deleteUserById(Integer id) {
         return userStore.deleteUserById(id).stream()
-                .map(user -> UserDTO.Controller.Mapper.ToReturnUserDTO(user))
+                .map(user -> UserDTO.Controller.Mapper.toReturnUserDTO(user))
                 .collect(Collectors.toList());
     }
 

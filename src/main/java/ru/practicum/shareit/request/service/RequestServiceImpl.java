@@ -14,6 +14,6 @@ public class RequestServiceImpl implements RequestService {
     }
 
     public Integer addRequest(ItemRequest request) {
-        return requestStore.addRequest(ItemRequestDTO.Mapper.ToDTO(request));
+        return requestStore.addRequest(ItemRequestDTO.Mapper.toDTO(request));
     }
 }

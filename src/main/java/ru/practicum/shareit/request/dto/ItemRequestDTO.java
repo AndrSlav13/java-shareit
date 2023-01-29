@@ -17,7 +17,7 @@ public enum ItemRequestDTO {
     }
 
     public static class Mapper {
-        public static NewReturnItemRequestDTO ToDTO(ItemRequest request) {
+        public static NewReturnItemRequestDTO toDTO(ItemRequest request) {
             NewReturnItemRequestDTO item = NewReturnItemRequestDTO.builder()
                     .id(request.getId())
                     .description(request.getDescription())
@@ -27,7 +27,7 @@ public enum ItemRequestDTO {
             return item;
         }
 
-        public static ItemRequest ToItemRequest(NewReturnItemRequestDTO requestDTO) {
+        public static ItemRequest toItemRequest(NewReturnItemRequestDTO requestDTO) {
             ItemRequest item = ItemRequest.builder()
                     .id(requestDTO.getId())
                     .description(requestDTO.getDescription())

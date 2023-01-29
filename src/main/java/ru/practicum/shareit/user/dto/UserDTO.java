@@ -33,7 +33,7 @@ public enum UserDTO {
         }
 
         public static class Mapper {
-            public static ReturnUserDTO ToReturnUserDTO(User user) {
+            public static ReturnUserDTO toReturnUserDTO(User user) {
                 ReturnUserDTO item = ReturnUserDTO.builder()
                         .name(user.getName())
                         .id(user.getId())
@@ -43,7 +43,7 @@ public enum UserDTO {
                 return item;
             }
 
-            public static User ToUser(NewUserDTO userDTO) {
+            public static User toUser(NewUserDTO userDTO) {
                 User item = User.builder()
                         .name(userDTO.getName())
                         .id(null)
@@ -53,7 +53,7 @@ public enum UserDTO {
                 return item;
             }
 
-            public static User ToUser(NewUserDTO userDTO, Integer userId) {
+            public static User toUser(NewUserDTO userDTO, Integer userId) {
                 User item = User.builder()
                         .name(userDTO.getName())
                         .id(userId)
@@ -77,7 +77,7 @@ public enum UserDTO {
         }
 
         public static class Mapper {
-            public static DBUserDTO ToDBUserDTO(User user) {
+            public static DBUserDTO toDBUserDTO(User user) {
                 DBUserDTO item = DBUserDTO.builder()
                         .name(user.getName())
                         .id(user.getId())
@@ -87,7 +87,7 @@ public enum UserDTO {
                 return item;
             }
 
-            public static User ToUser(DBUserDTO userDTO) {
+            public static User toUser(DBUserDTO userDTO) {
                 User item = User.builder()
                         .name(userDTO.name)
                         .id(userDTO.id)
