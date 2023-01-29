@@ -4,7 +4,8 @@ import lombok.Builder;
 import lombok.Data;
 import ru.practicum.shareit.request.model.ItemRequest;
 
-public enum ItemRequestDTO { ;
+public enum ItemRequestDTO {
+    ;
 
     @Data
     @Builder

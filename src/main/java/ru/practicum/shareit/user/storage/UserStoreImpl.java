@@ -63,8 +63,8 @@ public class UserStoreImpl implements UserStore {
     @Override
     public boolean containsEmail(String email) {
         Boolean contain = !(userStore.values().stream()
-                                .filter(usr -> usr.getEmail().equals(email))
-                                .collect(Collectors.toList()).isEmpty());
+                .filter(usr -> usr.getEmail().equals(email))
+                .collect(Collectors.toList()).isEmpty());
         return contain;
     }
 

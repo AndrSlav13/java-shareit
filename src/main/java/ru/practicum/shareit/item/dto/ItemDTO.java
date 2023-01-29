@@ -15,7 +15,8 @@ import java.time.format.DateTimeFormatter;
 //enum т.к. внутренний класс не сможет быть иначе static (если class вместо static).
 // А если не static, то надо создавать экземпляры внешних классов - enum здесь это namespace
 //get - значит проверка только когда берется значение. Если не используется, то и не проверяется
-public enum ItemDTO { ;
+public enum ItemDTO {
+    ;
     public static final DateTimeFormatter format = DateTimeFormatter.ISO_LOCAL_DATE_TIME;
 
     //Проверки для данных загружаемых в слой сервиса из контроллера и БД
@@ -40,7 +41,8 @@ public enum ItemDTO { ;
         Boolean getAvailable();
     }
 
-    public enum Controller { ;
+    public enum Controller {
+        ;
 
         @Data
         public static class NewItemDTO implements Name, Description, Available {
@@ -123,7 +125,8 @@ public enum ItemDTO { ;
     }
 
     //Из/в базу данных?
-    public enum Database { ;
+    public enum Database {
+        ;
 
         @Builder    //DB 1
         @Data

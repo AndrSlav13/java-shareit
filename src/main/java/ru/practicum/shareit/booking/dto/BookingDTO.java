@@ -11,7 +11,8 @@ import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 
-public enum BookingDTO { ;
+public enum BookingDTO {
+    ;
     public static final DateTimeFormatter format = DateTimeFormatter.ISO_LOCAL_DATE_TIME;
 
     public static LocalDateTime stringToLocalDateTime(String str) {
@@ -76,7 +77,8 @@ public enum BookingDTO { ;
         Integer getItemId();
     }
 
-    public enum Controller { ;
+    public enum Controller {
+        ;
 
         @Builder
         @Data
@@ -129,7 +131,8 @@ public enum BookingDTO { ;
     }
 
     //Из/в базу данных?
-    public enum Database { ;
+    public enum Database {
+        ;
 
         @Builder    //DB 2
         @Data
