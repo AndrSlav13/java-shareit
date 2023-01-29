@@ -6,14 +6,14 @@ import ru.practicum.shareit.user.model.User;
 
 import javax.validation.constraints.Pattern;
 
-public enum UserDTO {;
+public enum UserDTO { ;
 
     private interface Email {
         @Pattern(regexp = "[a-zA-Z_-][a-zA-Z0-9_-]+@[a-zA-Z]+\\.[a-zA-Z]+")
         String getEmail();
     }
 
-    public enum Controller {;
+    public enum Controller { ;
 
         @Data
         @Builder
@@ -63,7 +63,7 @@ public enum UserDTO {;
         }
     }
 
-    public enum Database {;
+    public enum Database { ;
 
         @Data
         @Builder
