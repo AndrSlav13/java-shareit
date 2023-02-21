@@ -4,14 +4,15 @@ https://habr.com/ru/post/513072/
 **/
 package ru.practicum.shareit.item.dto;
 
-import lombok.*;
+import lombok.Builder;
+import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 import ru.practicum.shareit.booking.dto.BookingDTO;
 import ru.practicum.shareit.booking.model.Booking;
-import ru.practicum.shareit.booking.service.BookingService;
 import ru.practicum.shareit.booking.service.BookingServiceSort;
 import ru.practicum.shareit.item.model.Comment;
 import ru.practicum.shareit.item.model.Item;
-import ru.practicum.shareit.user.model.User;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
@@ -71,7 +72,8 @@ public enum ItemDTO {
             Boolean available;
             Long ownerId;
             Long requestId;
-            public ReturnItemDTO(Long id, String name, String description, Boolean available, Long ownerId, Long requestId){
+
+            public ReturnItemDTO(Long id, String name, String description, Boolean available, Long ownerId, Long requestId) {
                 this.id = id;
                 this.name = name;
                 this.description = description;
@@ -92,7 +94,7 @@ public enum ItemDTO {
             public ReturnItemWithBookingsDTO(Long id, String name, String description, Boolean available, Long ownerId, Long requestId,
                                              BookingDTO.Controller.ReturnBookItemSimpleDTO lastBooking,
                                              BookingDTO.Controller.ReturnBookItemSimpleDTO nextBooking,
-                                             List<CommentDTO.Controller.ReturnCommentDTO> comments){
+                                             List<CommentDTO.Controller.ReturnCommentDTO> comments) {
                 super(id, name, description, available, ownerId, requestId);
                 this.lastBooking = lastBooking;
                 this.nextBooking = nextBooking;

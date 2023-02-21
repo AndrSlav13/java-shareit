@@ -4,7 +4,6 @@ import org.springframework.stereotype.Repository;
 import ru.practicum.shareit.request.dto.ItemRequestDTO;
 
 import java.util.HashMap;
-import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLong;
 
 @Repository

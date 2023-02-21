@@ -1,7 +1,9 @@
 package ru.practicum.shareit.user.dto;
 
-import lombok.*;
-import org.hibernate.validator.constraints.UniqueElements;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.RequiredArgsConstructor;
 import ru.practicum.shareit.user.model.User;
 
 import javax.validation.constraints.NotBlank;

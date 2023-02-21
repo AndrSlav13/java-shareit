@@ -4,7 +4,6 @@ import org.springframework.http.HttpStatus;
 import ru.practicum.shareit.booking.model.Booking;
 import ru.practicum.shareit.booking.model.BookingStateForOutput;
 import ru.practicum.shareit.booking.model.BookingStatus;
-import ru.practicum.shareit.booking.model.BookingTimeInterval;
 import ru.practicum.shareit.booking.service.BookingService;
 import ru.practicum.shareit.exceptions.HttpCustomException;
 import ru.practicum.shareit.item.model.Item;
@@ -23,23 +22,23 @@ public class BookingCriteriaRepositoryImpl implements BookingCriteriaRepository 
     private EntityManager entityManager;
 
     private Predicate predicatBooker(CriteriaBuilder cb, BookingStateForOutput state,
-                                     Path<BookingStatus> us, Path<LocalDateTime> start, Path<LocalDateTime> end){
+                                     Path<BookingStatus> us, Path<LocalDateTime> start, Path<LocalDateTime> end) {
         Predicate predicateStatus = cb.equal(us, cb.literal(state.label.bookingStatuses.get(0)));
         Predicate predicateTime = null;
 
-        for(BookingStatus b : state.label.bookingStatuses)
+        for (BookingStatus b : state.label.bookingStatuses)
             predicateStatus = cb.or(predicateStatus, cb.equal(us, cb.literal(b)));
 
-        switch (state.label.bookingTimeInterval){
+        switch (state.label.bookingTimeInterval) {
             case ALL:
-                predicateTime = cb.equal(cb.literal(1),cb.literal(1));
+                predicateTime = cb.equal(cb.literal(1), cb.literal(1));
                 break;
             case PAST:
                 predicateTime = cb.lessThanOrEqualTo(end.as(LocalDateTime.class), LocalDateTime.now());
                 break;
             case CURRENT:
                 predicateTime = cb.and(cb.lessThanOrEqualTo(start.as(LocalDateTime.class), LocalDateTime.now()),
-                                       cb.greaterThanOrEqualTo(end.as(LocalDateTime.class), LocalDateTime.now()));
+                        cb.greaterThanOrEqualTo(end.as(LocalDateTime.class), LocalDateTime.now()));
                 break;
             case FUTURE:
                 predicateTime = cb.greaterThanOrEqualTo(start.as(LocalDateTime.class), LocalDateTime.now());
@@ -49,6 +48,7 @@ public class BookingCriteriaRepositoryImpl implements BookingCriteriaRepository 
         }
         return cb.and(predicateStatus, predicateTime);
     }
+
     public
     @Override
     List<Booking> findByBooker(Long bookerId, BookingStateForOutput state) {
@@ -69,7 +69,7 @@ public class BookingCriteriaRepositoryImpl implements BookingCriteriaRepository 
         Predicate userPredicat = cb.equal(id, cb.literal(bookerId));
         List<Tuple> tuples = entityManager.createQuery(cr.where(cb.and(bookingPredicat, userPredicat))).getResultList();
 
-        return tuples.stream().map(tuple -> (Booking)tuple.get(joinItems))
+        return tuples.stream().map(tuple -> (Booking) tuple.get(joinItems))
                 .sorted(BookingService.comparator)
                 .collect(Collectors.toList());
     }
@@ -94,7 +94,7 @@ public class BookingCriteriaRepositoryImpl implements BookingCriteriaRepository 
         Predicate userPredicat = cb.equal(id, cb.literal(ownerId));
         List<Tuple> tuples = entityManager.createQuery(cr.where(cb.and(bookingPredicat, userPredicat))).getResultList();
 
-        return tuples.stream().map(tuple -> (Booking)tuple.get(joinBookings))
+        return tuples.stream().map(tuple -> (Booking) tuple.get(joinBookings))
                 .sorted(BookingService.comparator)
                 .collect(Collectors.toList());
     }

@@ -20,16 +20,19 @@ public interface ItemService {
     ItemDTO.Controller.ReturnItemWithBookingsDTO getItem(Long itemId, Optional<Long> idOwner);
 
     List<ItemDTO.Controller.ReturnItemDTO> searchItems(String text);
+
     Item getSimpleItem(Long id);
+
     CommentDTO.Controller.ReturnCommentDTO addComment(Comment comment, Long idOwner, Long itemId);
 
-    static boolean validate(Item item){
-        if(item == null) throw new HttpCustomException(HttpStatus.NOT_FOUND, "The item doesn't exist");
+    static boolean validate(Item item) {
+        if (item == null) throw new HttpCustomException(HttpStatus.NOT_FOUND, "The item doesn't exist");
         return true;
     }
 
-    static boolean validateComment(Comment comment){
-        if(comment.getText().isEmpty()) throw new HttpCustomException(HttpStatus.BAD_REQUEST, "Blank comment is forbidden");
+    static boolean validateComment(Comment comment) {
+        if (comment.getText().isEmpty())
+            throw new HttpCustomException(HttpStatus.BAD_REQUEST, "Blank comment is forbidden");
         return true;
     }
 }

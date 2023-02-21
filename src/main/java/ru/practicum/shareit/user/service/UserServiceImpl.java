@@ -24,8 +24,8 @@ public class UserServiceImpl implements UserService {
 
     @Transactional(readOnly = true)
     @Override
-    public User getSimpleUser(Long id){
-        User user = userStore.findById(id).orElseThrow(()->
+    public User getSimpleUser(Long id) {
+        User user = userStore.findById(id).orElseThrow(() ->
                 new HttpCustomException(HttpStatus.NOT_FOUND, "User with id=" + id + " is absent")
         );
         UserService.validate(user);
@@ -56,8 +56,8 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserDTO.Controller.ReturnUserDTO updateUserById(User user, Long idUser) {
         User usr = getSimpleUser(idUser);
-        if(user.getName() != null) usr.setName(user.getName());
-        if(user.getEmail() != null) usr.setEmail(user.getEmail());
+        if (user.getName() != null) usr.setName(user.getName());
+        if (user.getEmail() != null) usr.setEmail(user.getEmail());
         return UserDTO.Controller.Mapper.toReturnUserDTO(usr);
     }
 
@@ -69,28 +69,31 @@ public class UserServiceImpl implements UserService {
 
     @Transactional(readOnly = true)
     @Override
-    public boolean isUserBooker(Long itemId, Long userId){
+    public boolean isUserBooker(Long itemId, Long userId) {
         return userStore.isUserBooker(itemId, userId);
     }
 
     @Transactional(readOnly = true)
     @Override
-    public boolean isEarlierItemBookedByUser(Long itemId, Long userId){
+    public boolean isEarlierItemBookedByUser(Long itemId, Long userId) {
         return userStore.isEarlierItemBookedByUser(itemId, userId);
     }
+
     @Transactional(readOnly = true)
     @Override
-    public boolean isUserOwner(Long itemId, Long userId){
+    public boolean isUserOwner(Long itemId, Long userId) {
         return userStore.isUserOwner(itemId, userId);
     }
+
     @Transactional(readOnly = true)
     @Override
-    public boolean isUserOwnerOrBooker(Long itemId, Long userId){
+    public boolean isUserOwnerOrBooker(Long itemId, Long userId) {
         return userStore.isUserOwnerOrBooker(itemId, userId);
     }
+
     @Transactional(readOnly = true)
     @Override
-    public boolean isUserAbleToBook(Long itemId, Long userId){
+    public boolean isUserAbleToBook(Long itemId, Long userId) {
         return userStore.isUserAbleToBook(itemId, userId);
     }
 }

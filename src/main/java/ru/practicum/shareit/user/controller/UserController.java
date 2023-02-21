@@ -23,7 +23,7 @@ public class UserController {
     @PatchMapping(path = "/{id}")
     @ResponseBody
     public UserDTO.Controller.ReturnUserDTO updateUserById(@PathVariable(value = "id") Long idUser,
-                                                        @RequestBody @Valid UserDTO.Controller.UpdateUserDTO userDTO) {
+                                                           @RequestBody @Valid UserDTO.Controller.UpdateUserDTO userDTO) {
         return userService.updateUserById(UserDTO.Controller.Mapper.toUser(userDTO), idUser);
     }
 

@@ -14,7 +14,6 @@ import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.item.service.ItemService;
 import ru.practicum.shareit.user.model.User;
 import ru.practicum.shareit.user.service.UserService;
-import ru.practicum.shareit.user.service.UserServiceImpl;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -52,38 +51,39 @@ public class BookingServiceImpl implements BookingService {
     }
 
     @Override
-    public BookingDTO.Controller.ReturnBookItemDTO setApprove(Long bookingId, Long bookerId, String approved){
+    public BookingDTO.Controller.ReturnBookItemDTO setApprove(Long bookingId, Long bookerId, String approved) {
         User booker = userService.getSimpleUser(bookerId);
         Booking booking = bookingStore.findById(bookingId).get();
         UserService.validate(booker);
         BookingService.validate(booking);
 
-        if(!userService.isUserOwner(booking.getBooked().getId(), bookerId))
+        if (!userService.isUserOwner(booking.getBooked().getId(), bookerId))
             throw new HttpCustomException(HttpStatus.NOT_FOUND, "Status can be changed solely by owner");
 
-        if(booking.getStatus().equals(BookingStatus.APPROVED))
+        if (booking.getStatus().equals(BookingStatus.APPROVED))
             throw new HttpCustomException(HttpStatus.BAD_REQUEST, "Booking is already approved");
-        if(approved.equals("true")) booking.setStatus(BookingStatus.APPROVED);
-        if(approved.equals("false")) booking.setStatus(BookingStatus.REJECTED);
+        if (approved.equals("true")) booking.setStatus(BookingStatus.APPROVED);
+        if (approved.equals("false")) booking.setStatus(BookingStatus.REJECTED);
         return BookingDTO.Controller.Mapper.toReturnBookItemDTO(booking);
     }
 
     @Override
     @Transactional(readOnly = true)
-    public BookingDTO.Controller.ReturnBookItemDTO findByIdAndBookerOrIdAndOwner(Long bookingId, Long bookerId){
+    public BookingDTO.Controller.ReturnBookItemDTO findByIdAndBookerOrIdAndOwner(Long bookingId, Long bookerId) {
         User booker = userService.getSimpleUser(bookerId);
         Booking booking = bookingStore.findById(bookingId).orElse(null);
         UserService.validate(booker);
         BookingService.validate(booking);
 
-        if(!userService.isUserOwnerOrBooker(booking.getBooked().getId(), bookerId))
+        if (!userService.isUserOwnerOrBooker(booking.getBooked().getId(), bookerId))
             throw new HttpCustomException(HttpStatus.NOT_FOUND, "The user didn't book and doesn't owns this item");
 
         return BookingDTO.Controller.Mapper.toReturnBookItemDTO(bookingStore.findByIdAndBookerOrIdAndOwner(bookingId, bookerId).get(0));
     }
+
     @Override
     @Transactional(readOnly = true)
-    public List<BookingDTO.Controller.ReturnBookItemDTO> findByBooker(Long bookerId, String state){
+    public List<BookingDTO.Controller.ReturnBookItemDTO> findByBooker(Long bookerId, String state) {
         User booker = userService.getSimpleUser(bookerId);
         UserService.validate(booker);
 
@@ -91,9 +91,10 @@ public class BookingServiceImpl implements BookingService {
                 .map(booking -> BookingDTO.Controller.Mapper.toReturnBookItemDTO(booking))
                 .collect(Collectors.toList());
     }
+
     @Override
     @Transactional(readOnly = true)
-    public List<BookingDTO.Controller.ReturnBookItemDTO> findByOwner(Long bookerId, String state){
+    public List<BookingDTO.Controller.ReturnBookItemDTO> findByOwner(Long bookerId, String state) {
         User booker = userService.getSimpleUser(bookerId);
         UserService.validate(booker);
 

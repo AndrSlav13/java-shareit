@@ -57,8 +57,8 @@ public class ItemServiceImpl implements ItemService {
     }
 
     @Transactional(readOnly = true)
-    public Item getSimpleItem(Long id){
-        Item it = itemStore.findItemById(id).orElseThrow(()->
+    public Item getSimpleItem(Long id) {
+        Item it = itemStore.findItemById(id).orElseThrow(() ->
                 new HttpCustomException(HttpStatus.NOT_FOUND, "Item with id=" + id + " is absent")
         );
         return it;
@@ -72,38 +72,38 @@ public class ItemServiceImpl implements ItemService {
         List<Booking> lst = it.getBookings();
         List<Comment> com = it.getComments();
 
-        if(idOwner.isPresent() && !it.getOwner().getId().equals(idOwner.get())) lst = null;
+        if (idOwner.isPresent() && !it.getOwner().getId().equals(idOwner.get())) lst = null;
         return ItemDTO.Controller.Mapper.toReturnItemWithBookingsDTO(it, lst, com);
     }
 
     @Override
     public ItemDTO.Controller.ReturnItemDTO updateItem(Item item, Long ownerId, Long itemId) {
         Item it = getSimpleItem(itemId);
-        if(it.getOwner().getId() != ownerId) throw new HttpCustomException(HttpStatus.NOT_FOUND, "Wrong user id");
-        if(item.getAvailable() != null) it.setAvailable(item.getAvailable());
-        if(item.getDescription() != null) it.setDescription(item.getDescription());
-        if(item.getName() != null) it.setName(item.getName());
+        if (it.getOwner().getId() != ownerId) throw new HttpCustomException(HttpStatus.NOT_FOUND, "Wrong user id");
+        if (item.getAvailable() != null) it.setAvailable(item.getAvailable());
+        if (item.getDescription() != null) it.setDescription(item.getDescription());
+        if (item.getName() != null) it.setName(item.getName());
         return ItemDTO.Controller.Mapper.toReturnItemDTO(it);
     }
 
     @Transactional(readOnly = true)
     @Override
     public List<ItemDTO.Controller.ReturnItemDTO> searchItems(String text) {
-        if(text.isBlank()) return List.of();
+        if (text.isBlank()) return List.of();
         return itemStore.findByDescriptionContainsIgnoreCaseAndAvailableIsTrueOrNameContainsIgnoreCaseAndAvailableIsTrue(text, text).stream()
                 .map(item -> ItemDTO.Controller.Mapper.toReturnItemDTO(item))
                 .collect(Collectors.toList());
     }
+
     @Override
-    public
-    CommentDTO.Controller.ReturnCommentDTO addComment(Comment comment, Long idOwner, Long itemId){
+    public CommentDTO.Controller.ReturnCommentDTO addComment(Comment comment, Long idOwner, Long itemId) {
         User user = userService.getSimpleUser(idOwner);
         Item item = itemStore.findItemById(itemId).orElse(null);
         UserService.validate(user);
         ItemService.validate(item);
         ItemService.validateComment(comment);
 
-        if(!userService.isEarlierItemBookedByUser(itemId, idOwner))
+        if (!userService.isEarlierItemBookedByUser(itemId, idOwner))
             throw new HttpCustomException(HttpStatus.BAD_REQUEST, "The user has never booked the item");
 
         comment.setItemCommented(item);

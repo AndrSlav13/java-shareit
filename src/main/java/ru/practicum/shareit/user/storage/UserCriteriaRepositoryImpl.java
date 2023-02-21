@@ -2,9 +2,6 @@ package ru.practicum.shareit.user.storage;
 
 import org.springframework.http.HttpStatus;
 import ru.practicum.shareit.booking.model.Booking;
-import ru.practicum.shareit.booking.model.BookingStateForOutput;
-import ru.practicum.shareit.booking.model.BookingStatus;
-import ru.practicum.shareit.booking.service.BookingService;
 import ru.practicum.shareit.exceptions.HttpCustomException;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.user.model.User;
@@ -15,33 +12,32 @@ import javax.persistence.Tuple;
 import javax.persistence.criteria.*;
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.stream.Collectors;
 
-public class UserCriteriaRepositoryImpl implements UserCriteriaRepository{
+public class UserCriteriaRepositoryImpl implements UserCriteriaRepository {
     @PersistenceContext
     private EntityManager entityManager;
 
-        @Override
-        public boolean isEarlierItemBookedByUser(Long itemId, Long userId) {
-            CriteriaBuilder cb = entityManager.getCriteriaBuilder();
-            CriteriaQuery<Tuple> cr = cb.createTupleQuery();
-            Root<User> root = cr.from(User.class);
-            Join<User, List<Booking>> joinItems = root.join("bookings");
+    @Override
+    public boolean isEarlierItemBookedByUser(Long itemId, Long userId) {
+        CriteriaBuilder cb = entityManager.getCriteriaBuilder();
+        CriteriaQuery<Tuple> cr = cb.createTupleQuery();
+        Root<User> root = cr.from(User.class);
+        Join<User, List<Booking>> joinItems = root.join("bookings");
 
-            Path<Long> uId = root.get("id");
-            Path<LocalDateTime> dateBooked = joinItems.get("start");
-            Path<Item> itemBooked = joinItems.get("booked");
-            Path<Long> iId = itemBooked.get("id");
+        Path<Long> uId = root.get("id");
+        Path<LocalDateTime> dateBooked = joinItems.get("start");
+        Path<Item> itemBooked = joinItems.get("booked");
+        Path<Long> iId = itemBooked.get("id");
 
-            cr.multiselect(joinItems);
+        cr.multiselect(joinItems);
 
-            Predicate userPredicat = cb.equal(uId, cb.literal(userId));
-            Predicate datePredicat = cb.lessThanOrEqualTo(dateBooked, cb.currentTimestamp().as(LocalDateTime.class));
-            Predicate itemPredicat = cb.equal(iId, cb.literal(itemId));
-            List<Tuple> tuples = entityManager.createQuery(cr.where(cb.and(userPredicat, itemPredicat, datePredicat))).getResultList();
+        Predicate userPredicat = cb.equal(uId, cb.literal(userId));
+        Predicate datePredicat = cb.lessThanOrEqualTo(dateBooked, cb.currentTimestamp().as(LocalDateTime.class));
+        Predicate itemPredicat = cb.equal(iId, cb.literal(itemId));
+        List<Tuple> tuples = entityManager.createQuery(cr.where(cb.and(userPredicat, itemPredicat, datePredicat))).getResultList();
 
-            return tuples.isEmpty() ? false : true;
-        }
+        return tuples.isEmpty() ? false : true;
+    }
 
     @Override
     public boolean isUserBooker(Long itemId, Long userId) {
@@ -64,7 +60,7 @@ public class UserCriteriaRepositoryImpl implements UserCriteriaRepository{
     }
 
     @Override
-    public boolean isUserOwner(Long itemId, Long userId){
+    public boolean isUserOwner(Long itemId, Long userId) {
         CriteriaBuilder cb = entityManager.getCriteriaBuilder();
         CriteriaQuery<Tuple> cr = cb.createTupleQuery();
         Root<User> root = cr.from(User.class);
@@ -83,18 +79,18 @@ public class UserCriteriaRepositoryImpl implements UserCriteriaRepository{
     }
 
     @Override
-    public boolean isUserOwnerOrBooker(Long itemId, Long userId){
-        if(isUserBooker(itemId, userId)) return true;
-        if(isUserOwner(itemId, userId)) return true;
+    public boolean isUserOwnerOrBooker(Long itemId, Long userId) {
+        if (isUserBooker(itemId, userId)) return true;
+        if (isUserOwner(itemId, userId)) return true;
 
         return false;
     }
 
     @Override
-    public boolean isUserAbleToBook(Long itemId, Long userId){
+    public boolean isUserAbleToBook(Long itemId, Long userId) {
 
-            if(isUserOwner(itemId, userId))
-                throw new HttpCustomException(HttpStatus.NOT_FOUND, "The user is already owner of the item");
+        if (isUserOwner(itemId, userId))
+            throw new HttpCustomException(HttpStatus.NOT_FOUND, "The user is already owner of the item");
 
         CriteriaBuilder cb = entityManager.getCriteriaBuilder();
         CriteriaQuery<Tuple> cr = cb.createTupleQuery();
@@ -109,7 +105,7 @@ public class UserCriteriaRepositoryImpl implements UserCriteriaRepository{
         Predicate avaPredicat = cb.equal(available, cb.literal(true));
         List<Tuple> tuples = entityManager.createQuery(cr.where(cb.and(itemPredicat, avaPredicat))).getResultList();
 
-        if(tuples.isEmpty())
+        if (tuples.isEmpty())
             throw new HttpCustomException(HttpStatus.BAD_REQUEST, "The item is not available");
 
         return true;

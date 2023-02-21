@@ -34,7 +34,7 @@ public class ItemController {
 
     @GetMapping("/{itemId}")
     public ItemDTO.Controller.ReturnItemWithBookingsDTO getItem(@PathVariable Long itemId,
-                                                    @RequestHeader("X-Sharer-User-Id") Optional<Long> idOwner) {
+                                                                @RequestHeader("X-Sharer-User-Id") Optional<Long> idOwner) {
         return itemService.getItem(itemId, idOwner);
     }
 
@@ -50,8 +50,8 @@ public class ItemController {
 
     @PostMapping("{itemId}/comment")
     public CommentDTO.Controller.ReturnCommentDTO addItem(@RequestBody @Valid CommentDTO.Controller.NewCommentDTO commentDTO,
-                                                    @PathVariable Long itemId,
-                                                    @RequestHeader("X-Sharer-User-Id") Optional<Long> idOwner) {
+                                                          @PathVariable Long itemId,
+                                                          @RequestHeader("X-Sharer-User-Id") Optional<Long> idOwner) {
         return itemService.addComment(CommentDTO.Controller.Mapper.toComment(commentDTO), idOwner.get(), itemId);
     }
 }

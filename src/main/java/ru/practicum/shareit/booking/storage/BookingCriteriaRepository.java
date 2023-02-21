@@ -7,5 +7,6 @@ import java.util.List;
 
 public interface BookingCriteriaRepository {
     List<Booking> findByBooker(Long bookerId, BookingStateForOutput state);
+
     List<Booking> findByOwner(Long ownerId, BookingStateForOutput state);
 }

@@ -2,19 +2,12 @@ package ru.practicum.shareit.item.dto;
 
 import lombok.Builder;
 import lombok.Data;
-import lombok.Getter;
-import lombok.Setter;
-import ru.practicum.shareit.booking.dto.BookingDTO;
-import ru.practicum.shareit.booking.model.Booking;
-import ru.practicum.shareit.booking.service.BookingServiceSort;
 import ru.practicum.shareit.item.model.Comment;
-import ru.practicum.shareit.item.model.Item;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.List;
 
 public enum CommentDTO {
     ;
@@ -42,7 +35,7 @@ public enum CommentDTO {
         ;
 
         @Data
-        public static class NewCommentDTO implements Text{
+        public static class NewCommentDTO implements Text {
             String text;
         }
 
