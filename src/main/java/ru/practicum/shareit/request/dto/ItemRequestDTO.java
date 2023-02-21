@@ -10,9 +10,9 @@ public enum ItemRequestDTO {
     @Data
     @Builder
     public static class NewReturnItemRequestDTO {
-        private Integer id;
+        private Long id;
         private String description;
-        private Integer requestorId;
+        private Long requestorId;
         private String creationDate;
     }
 
@@ -21,7 +21,7 @@ public enum ItemRequestDTO {
             NewReturnItemRequestDTO item = NewReturnItemRequestDTO.builder()
                     .id(request.getId())
                     .description(request.getDescription())
-                    .requestorId(request.getRequestorId())
+                    .requestorId(request.getRequestor().getId())
                     .build();
 
             return item;
@@ -31,7 +31,6 @@ public enum ItemRequestDTO {
             ItemRequest item = ItemRequest.builder()
                     .id(requestDTO.getId())
                     .description(requestDTO.getDescription())
-                    .requestorId(requestDTO.getRequestorId())
                     .creationDate(requestDTO.getCreationDate())
                     .build();
 

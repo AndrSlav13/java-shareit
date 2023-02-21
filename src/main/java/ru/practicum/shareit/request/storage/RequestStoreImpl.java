@@ -5,19 +5,20 @@ import ru.practicum.shareit.request.dto.ItemRequestDTO;
 
 import java.util.HashMap;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicLong;
 
 @Repository
 public class RequestStoreImpl implements RequestStore {
-    private static final AtomicInteger count = new AtomicInteger(1);  //Счетчик id
-    private HashMap<Integer, ItemRequestDTO.NewReturnItemRequestDTO> requestStore;
+    private static final AtomicLong count = new AtomicLong(1L);  //Счетчик id
+    private HashMap<Long, ItemRequestDTO.NewReturnItemRequestDTO> requestStore;
 
     public RequestStoreImpl() {
         requestStore = new HashMap<>();
     }
 
     @Override
-    public Integer addRequest(ItemRequestDTO.NewReturnItemRequestDTO requestDTO) {
-        Integer cnt = count.getAndIncrement();
+    public Long addRequest(ItemRequestDTO.NewReturnItemRequestDTO requestDTO) {
+        Long cnt = count.getAndIncrement();
         requestDTO.setId(cnt);
         requestStore.put(cnt, requestDTO);
         return cnt;

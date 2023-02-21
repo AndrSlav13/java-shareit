@@ -1,9 +1,11 @@
 package ru.practicum.shareit.user.dto;
 
-import lombok.Builder;
-import lombok.Data;
+import lombok.*;
+import org.hibernate.validator.constraints.UniqueElements;
 import ru.practicum.shareit.user.model.User;
 
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 
 public enum UserDTO {
@@ -11,6 +13,13 @@ public enum UserDTO {
 
     private interface Email {
         @Pattern(regexp = "[a-zA-Z_-][a-zA-Z0-9_-]+@[a-zA-Z]+\\.[a-zA-Z]+")
+        @NotNull
+        String getEmail();
+    }
+
+    private interface Name {
+        @NotNull
+        @NotBlank
         String getEmail();
     }
 
@@ -18,16 +27,22 @@ public enum UserDTO {
         ;
 
         @Data
+        @RequiredArgsConstructor
+        @AllArgsConstructor
         @Builder
-        public static class NewUserDTO implements Email {
+        public static class UpdateUserDTO {
             private String name;
             private String email;
         }
 
         @Data
+        public static class NewUserDTO extends UpdateUserDTO implements Email, Name {
+        }
+
+        @Data
         @Builder
         public static class ReturnUserDTO implements Email {
-            private Integer id;
+            private Long id;
             private String name;
             private String email;
         }
@@ -43,7 +58,7 @@ public enum UserDTO {
                 return item;
             }
 
-            public static User toUser(NewUserDTO userDTO) {
+            public static User toUser(UpdateUserDTO userDTO) {
                 User item = User.builder()
                         .name(userDTO.getName())
                         .id(null)
@@ -53,49 +68,7 @@ public enum UserDTO {
                 return item;
             }
 
-            public static User toUser(NewUserDTO userDTO, Integer userId) {
-                User item = User.builder()
-                        .name(userDTO.getName())
-                        .id(userId)
-                        .email(userDTO.getEmail())
-                        .build();
-
-                return item;
-            }
         }
     }
 
-    public enum Database {
-        ;
-
-        @Data
-        @Builder
-        public static class DBUserDTO implements Email {
-            private Integer id;
-            private String name;
-            private String email;
-        }
-
-        public static class Mapper {
-            public static DBUserDTO toDBUserDTO(User user) {
-                DBUserDTO item = DBUserDTO.builder()
-                        .name(user.getName())
-                        .id(user.getId())
-                        .email(user.getEmail())
-                        .build();
-
-                return item;
-            }
-
-            public static User toUser(DBUserDTO userDTO) {
-                User item = User.builder()
-                        .name(userDTO.name)
-                        .id(userDTO.id)
-                        .email(userDTO.email)
-                        .build();
-
-                return item;
-            }
-        }
-    }
 }

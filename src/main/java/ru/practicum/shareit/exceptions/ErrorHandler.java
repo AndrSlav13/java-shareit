@@ -30,6 +30,13 @@ public class ErrorHandler {
     }
 
     @ExceptionHandler
+    public ErrorResponse handleWrongEnum(HttpServletResponse resp, final WrongEnumStatusException e) {
+        log.warn(e.getMessage(), e);
+        resp.setStatus(e.getCode());
+        return new ErrorResponse(e.getMessageWithoutCode());
+    }
+
+    @ExceptionHandler
     public ErrorResponse handleCustom(HttpServletResponse resp, final HttpCustomException e) {
         log.warn(e.getMessage(), e);
         resp.setStatus(e.getCode());

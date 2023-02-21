@@ -14,7 +14,7 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 @Documented
 @Constraint(validatedBy = DateTimeConstrainValidator.class)
 public @interface DateTimeConstrain {
-    public static final String format = DateTimeFormatter.ISO_DATE_TIME.toString();
+    String format = DateTimeFormatter.ISO_DATE_TIME.toString();
 
     String message() default "Allowed formats: ";
 }

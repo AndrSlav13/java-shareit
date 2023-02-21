@@ -19,6 +19,4 @@ public @interface EnumStatusBookingConstrain {
     String regexp() default "*";
 
     String message() default "must match \"{regexp}\" and belong to ENUM \"StatusItem\"";
-//    Class<?>[] groups() default {};
-//    Class<? extends Payload>[] payload() default {};
 }

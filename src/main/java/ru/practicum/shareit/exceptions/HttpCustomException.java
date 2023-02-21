@@ -38,4 +38,10 @@ public class HttpCustomException extends RuntimeException {
     public String getMessage() {
         return "" + code + " : " + message;
     }
+    public String getMessageWithoutCode() {
+        return message;
+    }
+    public void setMessage(String s) {
+        message = s;
+    }
 }
