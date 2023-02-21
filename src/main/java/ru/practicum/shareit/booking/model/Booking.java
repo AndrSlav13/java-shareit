@@ -1,9 +1,6 @@
 package ru.practicum.shareit.booking.model;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.springframework.http.HttpStatus;
 import ru.practicum.shareit.exceptions.HttpCustomException;
 import ru.practicum.shareit.item.model.Item;
@@ -29,9 +26,11 @@ public class Booking {
     private LocalDateTime start;
     @Column(name = "booking_end")
     private LocalDateTime end;
+    @ToString.Exclude
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "booked_id")
     private Item booked;
+    @ToString.Exclude
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "booker_id")
     private User booker;

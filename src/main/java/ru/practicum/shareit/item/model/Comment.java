@@ -6,9 +6,7 @@ import javax.persistence.*;
 import java.time.LocalDateTime;
 
 @Builder
-@Getter
-@Setter
-@ToString
+@Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
@@ -19,6 +17,7 @@ public class Comment {
     private Long id;
     @Column(name = "commentary")
     private String text;
+    @Column(name = "author_name")
     private String authorName;
     private LocalDateTime created;
     @ToString.Exclude

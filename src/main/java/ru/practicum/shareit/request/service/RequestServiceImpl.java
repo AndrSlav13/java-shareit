@@ -7,7 +7,7 @@ import ru.practicum.shareit.request.model.ItemRequest;
 import ru.practicum.shareit.request.storage.RequestStore;
 
 @Service
-@Transactional
+@Transactional(readOnly = true)
 public class RequestServiceImpl implements RequestService {
     private RequestStore requestStore;
 
@@ -15,6 +15,7 @@ public class RequestServiceImpl implements RequestService {
         this.requestStore = requestStore;
     }
 
+    @Transactional
     @Override
     public Long addRequest(ItemRequest request) {
         return requestStore.addRequest(ItemRequestDTO.Mapper.toDTO(request));

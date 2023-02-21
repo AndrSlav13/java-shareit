@@ -21,7 +21,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
-@Transactional
+@Transactional(readOnly = true)
 public class ItemServiceImpl implements ItemService {
     private final ItemRepository itemStore;
     private final UserService userService;
@@ -34,6 +34,7 @@ public class ItemServiceImpl implements ItemService {
         this.commentRepository = commentRepository;
     }
 
+    @Transactional
     @Override       //idOwner from headers
     public ItemDTO.Controller.ReturnItemDTO addItem(Item item, Long idOwner) {
         User usr = userService.getSimpleUser(idOwner);
@@ -45,18 +46,19 @@ public class ItemServiceImpl implements ItemService {
         return ItemDTO.Controller.Mapper.toReturnItemDTO(item);
     }
 
-    @Transactional(readOnly = true)
     @Override
     public List<ItemDTO.Controller.ReturnItemWithBookingsDTO> getAllItems(Long ownerId) {
         User user = userService.getSimpleUser(ownerId);
         UserService.validate(user);
 
-        return itemStore.findAllByOwnerId(ownerId).stream()
+        return user.getItems().stream()
                 .map(item -> getItem(item.getId(), Optional.of(ownerId)))
+                .sorted((item1, item2) ->
+                        item1.getId() < item2.getId() ? -1 : 1
+                )
                 .collect(Collectors.toList());
     }
 
-    @Transactional(readOnly = true)
     public Item getSimpleItem(Long id) {
         Item it = itemStore.findItemById(id).orElseThrow(() ->
                 new HttpCustomException(HttpStatus.NOT_FOUND, "Item with id=" + id + " is absent")
@@ -64,7 +66,6 @@ public class ItemServiceImpl implements ItemService {
         return it;
     }
 
-    @Transactional(readOnly = true)
     @Override
     public ItemDTO.Controller.ReturnItemWithBookingsDTO getItem(Long itemId, Optional<Long> idOwner) {
         Item it = getSimpleItem(itemId);
@@ -76,17 +77,18 @@ public class ItemServiceImpl implements ItemService {
         return ItemDTO.Controller.Mapper.toReturnItemWithBookingsDTO(it, lst, com);
     }
 
+    @Transactional
     @Override
     public ItemDTO.Controller.ReturnItemDTO updateItem(Item item, Long ownerId, Long itemId) {
         Item it = getSimpleItem(itemId);
-        if (!it.getOwner().getId().equals(ownerId)) throw new HttpCustomException(HttpStatus.NOT_FOUND, "Wrong user id");
+        if (!it.getOwner().getId().equals(ownerId))
+            throw new HttpCustomException(HttpStatus.NOT_FOUND, "Wrong user id");
         if (item.getAvailable() != null) it.setAvailable(item.getAvailable());
         if (item.getDescription() != null) it.setDescription(item.getDescription());
         if (item.getName() != null) it.setName(item.getName());
         return ItemDTO.Controller.Mapper.toReturnItemDTO(it);
     }
 
-    @Transactional(readOnly = true)
     @Override
     public List<ItemDTO.Controller.ReturnItemDTO> searchItems(String text) {
         if (text.isBlank()) return List.of();
@@ -95,6 +97,7 @@ public class ItemServiceImpl implements ItemService {
                 .collect(Collectors.toList());
     }
 
+    @Transactional
     @Override
     public CommentDTO.Controller.ReturnCommentDTO addComment(Comment comment, Long idOwner, Long itemId) {
         User user = userService.getSimpleUser(idOwner);
@@ -108,7 +111,8 @@ public class ItemServiceImpl implements ItemService {
 
         comment.setItemCommented(item);
         comment.setAuthorName(user.getName());
-
+        commentRepository.save(comment);
+        item.addComment(comment);
         return CommentDTO.Controller.Mapper.toReturnCommentDTO(commentRepository.save(comment));
     }
 }

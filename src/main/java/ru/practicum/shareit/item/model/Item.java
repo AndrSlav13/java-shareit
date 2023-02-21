@@ -46,6 +46,26 @@ public class Item {
     @OneToMany(mappedBy = "itemCommented", fetch = FetchType.LAZY)
     private List<Comment> comments = new ArrayList<>();
 
+    public void addBooking(Booking booking) {
+        bookings.add(booking);
+        booking.setBooked(this);
+    }
+
+    public void removeBooking(Booking booking) {
+        bookings.remove(booking);
+        booking.setBooked(null);
+    }
+
+    public void addComment(Comment comment) {
+        comments.add(comment);
+        comment.setItemCommented(this);
+    }
+
+    public void removeComment(Comment comment) {
+        comments.remove(comment);
+        comment.setItemCommented(null);
+    }
+
     @Override
     public boolean equals(Object o) {
         if (o == null || o.getClass() != this.getClass()) return false;

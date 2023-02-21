@@ -13,7 +13,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
-@Transactional
+@Transactional(readOnly = true)
 public class UserServiceImpl implements UserService {
     private final UserRepository userStore;
 
@@ -22,7 +22,6 @@ public class UserServiceImpl implements UserService {
         this.userStore = userStore;
     }
 
-    @Transactional(readOnly = true)
     @Override
     public User getSimpleUser(Long id) {
         User user = userStore.findById(id).orElseThrow(() ->
@@ -32,14 +31,12 @@ public class UserServiceImpl implements UserService {
         return user;
     }
 
-    @Transactional(readOnly = true)
     @Override
     public UserDTO.Controller.ReturnUserDTO getUserById(Long id) {
         User user = getSimpleUser(id);
         return UserDTO.Controller.Mapper.toReturnUserDTO(user);
     }
 
-    @Transactional(readOnly = true)
     @Override
     public List<UserDTO.Controller.ReturnUserDTO> getAllUsers() {
         return userStore.findAllByIdNotNull().stream()
@@ -47,12 +44,14 @@ public class UserServiceImpl implements UserService {
                 .collect(Collectors.toList());
     }
 
+    @Transactional
     @Override
     public UserDTO.Controller.ReturnUserDTO addUser(User user) {
         User usr = userStore.save(user);
         return UserDTO.Controller.Mapper.toReturnUserDTO(usr);
     }
 
+    @Transactional
     @Override
     public UserDTO.Controller.ReturnUserDTO updateUserById(User user, Long idUser) {
         User usr = getSimpleUser(idUser);
@@ -61,37 +60,33 @@ public class UserServiceImpl implements UserService {
         return UserDTO.Controller.Mapper.toReturnUserDTO(usr);
     }
 
+    @Transactional
     @Override
     public List<UserDTO.Controller.ReturnUserDTO> deleteUserById(Long id) {
         userStore.deleteById(id);
         return getAllUsers();
     }
 
-    @Transactional(readOnly = true)
     @Override
     public boolean isUserBooker(Long itemId, Long userId) {
         return userStore.isUserBooker(itemId, userId);
     }
 
-    @Transactional(readOnly = true)
     @Override
     public boolean isEarlierItemBookedByUser(Long itemId, Long userId) {
         return userStore.isEarlierItemBookedByUser(itemId, userId);
     }
 
-    @Transactional(readOnly = true)
     @Override
     public boolean isUserOwner(Long itemId, Long userId) {
         return userStore.isUserOwner(itemId, userId);
     }
 
-    @Transactional(readOnly = true)
     @Override
     public boolean isUserOwnerOrBooker(Long itemId, Long userId) {
         return userStore.isUserOwnerOrBooker(itemId, userId);
     }
 
-    @Transactional(readOnly = true)
     @Override
     public boolean isUserAbleToBook(Long itemId, Long userId) {
         return userStore.isUserAbleToBook(itemId, userId);

@@ -17,6 +17,7 @@ import ru.practicum.shareit.item.model.Item;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -113,6 +114,8 @@ public enum ItemDTO {
                         .available(dtoItem.available)
                         .owner(null)   //Set id from headers
                         .request(null)    //No request
+                        .bookings(new ArrayList<>())
+                        .comments(new ArrayList<>())
                         .build();
 
                 return item;

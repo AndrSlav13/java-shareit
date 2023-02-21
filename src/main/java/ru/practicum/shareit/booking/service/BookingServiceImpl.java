@@ -19,7 +19,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
-@Transactional
+@Transactional(readOnly = true)
 public class BookingServiceImpl implements BookingService {
 
     private final BookingRepository bookingStore;
@@ -35,6 +35,7 @@ public class BookingServiceImpl implements BookingService {
         this.itemService = itemService;
     }
 
+    @Transactional
     @Override
     public BookingDTO.Controller.ReturnBookItemDTO addItem(Booking booking, Long bookerId, Long itemId) {
         User user = userService.getSimpleUser(bookerId);
@@ -46,10 +47,13 @@ public class BookingServiceImpl implements BookingService {
         userService.isUserAbleToBook(itemId, bookerId);
 
         booking.setBooked(it);
+        bookingStore.save(booking);
         user.addBooking(booking);
+        it.addBooking(booking);
         return BookingDTO.Controller.Mapper.toReturnBookItemDTO(bookingStore.save(booking));
     }
 
+    @Transactional
     @Override
     public BookingDTO.Controller.ReturnBookItemDTO setApprove(Long bookingId, Long bookerId, String approved) {
         User booker = userService.getSimpleUser(bookerId);
@@ -68,7 +72,6 @@ public class BookingServiceImpl implements BookingService {
     }
 
     @Override
-    @Transactional(readOnly = true)
     public BookingDTO.Controller.ReturnBookItemDTO findByIdAndBookerOrIdAndOwner(Long bookingId, Long bookerId) {
         User booker = userService.getSimpleUser(bookerId);
         Booking booking = bookingStore.findById(bookingId).orElse(null);
@@ -82,7 +85,6 @@ public class BookingServiceImpl implements BookingService {
     }
 
     @Override
-    @Transactional(readOnly = true)
     public List<BookingDTO.Controller.ReturnBookItemDTO> findByBooker(Long bookerId, String state) {
         User booker = userService.getSimpleUser(bookerId);
         UserService.validate(booker);
@@ -93,7 +95,6 @@ public class BookingServiceImpl implements BookingService {
     }
 
     @Override
-    @Transactional(readOnly = true)
     public List<BookingDTO.Controller.ReturnBookItemDTO> findByOwner(Long bookerId, String state) {
         User booker = userService.getSimpleUser(bookerId);
         UserService.validate(booker);

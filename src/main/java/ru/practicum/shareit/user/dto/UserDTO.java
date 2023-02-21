@@ -9,6 +9,7 @@ import ru.practicum.shareit.user.model.User;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
+import java.util.ArrayList;
 
 public enum UserDTO {
     ;
@@ -65,6 +66,9 @@ public enum UserDTO {
                         .name(userDTO.getName())
                         .id(null)
                         .email(userDTO.getEmail())
+                        .items(new ArrayList<>())
+                        .bookings(new ArrayList<>())
+                        .requests(new ArrayList<>())
                         .build();
 
                 return item;
