@@ -79,7 +79,7 @@ public class ItemServiceImpl implements ItemService {
     @Override
     public ItemDTO.Controller.ReturnItemDTO updateItem(Item item, Long ownerId, Long itemId) {
         Item it = getSimpleItem(itemId);
-        if (it.getOwner().getId() != ownerId) throw new HttpCustomException(HttpStatus.NOT_FOUND, "Wrong user id");
+        if (!it.getOwner().getId().equals(ownerId)) throw new HttpCustomException(HttpStatus.NOT_FOUND, "Wrong user id");
         if (item.getAvailable() != null) it.setAvailable(item.getAvailable());
         if (item.getDescription() != null) it.setDescription(item.getDescription());
         if (item.getName() != null) it.setName(item.getName());
