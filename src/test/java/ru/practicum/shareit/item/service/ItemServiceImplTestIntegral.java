@@ -111,6 +111,8 @@ class ItemServiceImplTestIntegral {
 
         it = itemService.getItem(itemId, userId2);
         assertThat(it.getId()).isEqualTo(itemId);
+        assertThat(it.getNextBooking()).isNull();
+        assertThat(it.getLastBooking()).isNull();
 
         bookingId = bookingService.addItem(booking = booking.toBuilder()
                         .booked(item)
@@ -146,6 +148,15 @@ class ItemServiceImplTestIntegral {
         assertThat(it).isNotNull();
         assertThat(it.getDescription()).isEqualTo(item2.getDescription());
         assertThat(it.getName()).isEqualTo(item2.getName());
+
+        item2.toBuilder().description(null).available(null).name(null);
+        itemService.updateItem(item2, userId, itemId);
+        it = itemService.getSimpleItem(itemId);
+
+        assertThat(it).isNotNull();
+        assertThat(it.getDescription()).isEqualTo(item.getDescription());
+        assertThat(it.getName()).isEqualTo(item.getName());
+        assertThat(it.getAvailable()).isEqualTo(item.getAvailable());
     }
 
     @Test
