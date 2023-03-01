@@ -114,7 +114,7 @@ public class ItemControllerTest {
                     return ItemDTO.Controller.Mapper.toReturnItemDTO(b);
                 });
 
-        mvc.perform(patch("/items/{itemId}",item.getId())
+        mvc.perform(patch("/items/{itemId}", item.getId())
                         .content(mapper.writeValueAsString(itemDTO))
                         .characterEncoding(StandardCharsets.UTF_8)
                         .contentType(MediaType.APPLICATION_JSON)
@@ -131,13 +131,13 @@ public class ItemControllerTest {
         Mockito
                 .when(itemService.getItem(Mockito.any(), Mockito.any()))
                 .thenAnswer(i -> {
-                    User u = User.builder().id((Long)(i.getArguments()[1])).build();
-                    Item b = Item.builder().id((Long)(i.getArguments()[0])).build();
+                    User u = User.builder().id((Long) (i.getArguments()[1])).build();
+                    Item b = Item.builder().id((Long) (i.getArguments()[0])).build();
                     b = b.toBuilder().owner(u).build();
-                    return ItemDTO.Controller.Mapper.toReturnItemWithBookingsDTO(b,null,null,List.of());
+                    return ItemDTO.Controller.Mapper.toReturnItemWithBookingsDTO(b, null, null, List.of());
                 });
 
-        mvc.perform(get("/items/{itemId}",item.getId())
+        mvc.perform(get("/items/{itemId}", item.getId())
                         .characterEncoding(StandardCharsets.UTF_8)
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON)
@@ -153,12 +153,12 @@ public class ItemControllerTest {
                 .when(itemService.searchItems(Mockito.anyString(), Mockito.anyInt(), Mockito.anyInt()))
                 .thenAnswer(i -> {
                     User u = User.builder().id(45L).build();
-                    Item b = Item.builder().owner(u).name((String)(i.getArguments()[0])).build();
+                    Item b = Item.builder().owner(u).name((String) (i.getArguments()[0])).build();
                     return List.of(ItemDTO.Controller.Mapper.toReturnItemDTO(b));
                 });
 
         mvc.perform(get("/items/search")
-                        .param("text","i hate tests")
+                        .param("text", "i hate tests")
                         .characterEncoding(StandardCharsets.UTF_8)
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON)
@@ -173,14 +173,14 @@ public class ItemControllerTest {
         Mockito
                 .when(itemService.addComment(Mockito.any(), Mockito.any(), Mockito.any()))
                 .thenAnswer(i -> {
-                    User u = User.builder().id((Long)(i.getArguments()[1])).build();
-                    Item b = Item.builder().owner(u).id((Long)(i.getArguments()[2])).comments(new ArrayList<>()).build();
-                    Comment com = (Comment)(i.getArguments()[0]);
+                    User u = User.builder().id((Long) (i.getArguments()[1])).build();
+                    Item b = Item.builder().owner(u).id((Long) (i.getArguments()[2])).comments(new ArrayList<>()).build();
+                    Comment com = (Comment) (i.getArguments()[0]);
                     b.addComment(com);
                     return CommentDTO.Controller.Mapper.toReturnCommentDTO(com);
                 });
 
-        mvc.perform(post("/items/{itemId}/comment",item.getId())
+        mvc.perform(post("/items/{itemId}/comment", item.getId())
                         .content(mapper.writeValueAsString(commentDTO))
                         .characterEncoding(StandardCharsets.UTF_8)
                         .contentType(MediaType.APPLICATION_JSON)

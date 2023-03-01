@@ -9,11 +9,13 @@ import java.time.LocalDateTime;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
 @Entity
 @Table(name = "comments")
 public class Comment {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @EqualsAndHashCode.Include
     private Long id;
     @Column(name = "commentary")
     private String text;
@@ -24,16 +26,4 @@ public class Comment {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "item_id")
     private Item itemCommented;
-
-    @Override
-    public boolean equals(Object o) {
-        if (o == null || o.getClass() != this.getClass()) return false;
-        if (this == o || this.getId().equals(((Comment) o).getId())) return true;
-        return false;
-    }
-
-    @Override
-    public int hashCode() {
-        return id.hashCode();
-    }
 }

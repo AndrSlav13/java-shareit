@@ -27,7 +27,7 @@ public enum CommentDTO {
         @Data
         public static class NewCommentDTO implements Text {
             String text;
-            String ttt;
+            String notused;
         }
 
         @Builder

@@ -15,7 +15,6 @@ import ru.practicum.shareit.item.model.Item;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -25,8 +24,6 @@ import java.util.stream.Collectors;
 //get - значит проверка только когда берется значение. Если не используется, то и не проверяется
 public enum ItemDTO {
     ;
-    public static final DateTimeFormatter format = DateTimeFormatter.ISO_LOCAL_DATE_TIME;
-
     //Проверки для данных загружаемых в слой сервиса из контроллера и БД
 
     private interface Name {
