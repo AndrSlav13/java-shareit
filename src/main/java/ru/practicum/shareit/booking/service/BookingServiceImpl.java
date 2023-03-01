@@ -38,6 +38,7 @@ public class BookingServiceImpl implements BookingService {
     @Transactional
     @Override
     public BookingDTO.Controller.ReturnBookItemDTO addItem(Booking booking, Long bookerId, Long itemId) {
+        booking.setId(null);
         User user = userService.getSimpleUser(bookerId);
         Item it = itemService.getSimpleItem(itemId);
         BookingService.validate(booking);
@@ -50,7 +51,7 @@ public class BookingServiceImpl implements BookingService {
         bookingStore.save(booking);
         user.addBooking(booking);
         it.addBooking(booking);
-        return BookingDTO.Controller.Mapper.toReturnBookItemDTO(bookingStore.save(booking));
+        return BookingDTO.Controller.Mapper.toReturnBookItemDTO(booking);
     }
 
     @Transactional
@@ -85,21 +86,21 @@ public class BookingServiceImpl implements BookingService {
     }
 
     @Override
-    public List<BookingDTO.Controller.ReturnBookItemDTO> findByBooker(Long bookerId, String state) {
+    public List<BookingDTO.Controller.ReturnBookItemDTO> findByBooker(Long bookerId, String state, Integer from, Integer size) {
         User booker = userService.getSimpleUser(bookerId);
         UserService.validate(booker);
 
-        return bookingStore.findByBooker(bookerId, BookingStateForOutput.vOf(state)).stream()
+        return bookingStore.findByBooker(bookerId, BookingStateForOutput.vOf(state), from, size).stream()
                 .map(booking -> BookingDTO.Controller.Mapper.toReturnBookItemDTO(booking))
                 .collect(Collectors.toList());
     }
 
     @Override
-    public List<BookingDTO.Controller.ReturnBookItemDTO> findByOwner(Long bookerId, String state) {
+    public List<BookingDTO.Controller.ReturnBookItemDTO> findByOwner(Long bookerId, String state, Integer from, Integer size) {
         User booker = userService.getSimpleUser(bookerId);
         UserService.validate(booker);
 
-        return bookingStore.findByOwner(bookerId, BookingStateForOutput.vOf(state)).stream()
+        return bookingStore.findByOwner(bookerId, BookingStateForOutput.vOf(state), from, size).stream()
                 .map(booking -> BookingDTO.Controller.Mapper.toReturnBookItemDTO(booking))
                 .collect(Collectors.toList());
     }

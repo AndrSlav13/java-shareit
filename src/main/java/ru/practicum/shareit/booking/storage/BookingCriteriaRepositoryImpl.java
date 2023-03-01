@@ -12,6 +12,7 @@ import ru.practicum.shareit.user.model.User;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Tuple;
+import javax.persistence.TypedQuery;
 import javax.persistence.criteria.*;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -51,7 +52,7 @@ public class BookingCriteriaRepositoryImpl implements BookingCriteriaRepository 
 
     public
     @Override
-    List<Booking> findByBooker(Long bookerId, BookingStateForOutput state) {
+    List<Booking> findByBooker(Long bookerId, BookingStateForOutput state, Integer from, Integer size) {
         CriteriaBuilder cb = entityManager.getCriteriaBuilder();
         CriteriaQuery<Tuple> cr = cb.createTupleQuery();
 
@@ -67,16 +68,22 @@ public class BookingCriteriaRepositoryImpl implements BookingCriteriaRepository 
 
         Predicate bookingPredicat = predicatBooker(cb, state, us, start, end);
         Predicate userPredicat = cb.equal(id, cb.literal(bookerId));
-        List<Tuple> tuples = entityManager.createQuery(cr.where(cb.and(bookingPredicat, userPredicat))).getResultList();
+        cr.orderBy(cb.desc(start));
 
-        return tuples.stream().map(tuple -> (Booking) tuple.get(joinItems))
+        TypedQuery<Tuple> typedQuery = entityManager.createQuery(cr.where(cb.and(bookingPredicat, userPredicat)));
+        typedQuery.setFirstResult(from);
+        typedQuery.setMaxResults(size);
+        List<Tuple> req = typedQuery.getResultList();
+
+
+        return req.stream().map(tuple -> (Booking) tuple.get(joinItems))
                 .sorted(BookingService.comparator)
                 .collect(Collectors.toList());
     }
 
     public
     @Override
-    List<Booking> findByOwner(Long ownerId, BookingStateForOutput state) {
+    List<Booking> findByOwner(Long ownerId, BookingStateForOutput state, Integer from, Integer size) {
         CriteriaBuilder cb = entityManager.getCriteriaBuilder();
         CriteriaQuery<Tuple> cr = cb.createTupleQuery();
         Root<Item> root = cr.from(Item.class);
@@ -92,9 +99,14 @@ public class BookingCriteriaRepositoryImpl implements BookingCriteriaRepository 
 
         Predicate bookingPredicat = predicatBooker(cb, state, us, start, end);
         Predicate userPredicat = cb.equal(id, cb.literal(ownerId));
-        List<Tuple> tuples = entityManager.createQuery(cr.where(cb.and(bookingPredicat, userPredicat))).getResultList();
+        cr.orderBy(cb.desc(start));
 
-        return tuples.stream().map(tuple -> (Booking) tuple.get(joinBookings))
+        TypedQuery<Tuple> typedQuery = entityManager.createQuery(cr.where(cb.and(bookingPredicat, userPredicat)));
+        typedQuery.setFirstResult(from);
+        typedQuery.setMaxResults(size);
+        List<Tuple> req = typedQuery.getResultList();
+
+        return req.stream().map(tuple -> (Booking) tuple.get(joinBookings))
                 .sorted(BookingService.comparator)
                 .collect(Collectors.toList());
     }

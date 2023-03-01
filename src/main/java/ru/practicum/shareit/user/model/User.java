@@ -9,7 +9,7 @@ import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
 
-@Builder
+@Builder(toBuilder = true)
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
@@ -52,6 +52,16 @@ public class User {
     public void removeBooking(Booking it) {
         bookings.remove(it);
         it.setBooker(null);
+    }
+
+    public void addRequest(ItemRequest it) {
+        requests.add(it);
+        it.setRequestor(this);
+    }
+
+    public void removeRequest(ItemRequest it) {
+        requests.remove(it);
+        it.setRequestor(null);
     }
 
     @Override

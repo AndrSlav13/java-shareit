@@ -10,7 +10,6 @@ import lombok.Getter;
 import lombok.Setter;
 import ru.practicum.shareit.booking.dto.BookingDTO;
 import ru.practicum.shareit.booking.model.Booking;
-import ru.practicum.shareit.booking.service.BookingServiceSort;
 import ru.practicum.shareit.item.model.Comment;
 import ru.practicum.shareit.item.model.Item;
 
@@ -49,13 +48,16 @@ public enum ItemDTO {
     public enum Controller {
         ;
 
+        @Builder
         @Data
         public static class NewItemDTO implements Name, Description, Available {
             String name;
             String description;
             Boolean available;
+            Long requestId;
         }
 
+        @Builder
         @Data
         public static class UpdateItemDTO {
             String name;
@@ -113,9 +115,9 @@ public enum ItemDTO {
                         .id(null)   //Set in DB context
                         .available(dtoItem.available)
                         .owner(null)   //Set id from headers
-                        .request(null)    //No request
                         .bookings(new ArrayList<>())
                         .comments(new ArrayList<>())
+                        .requests(new ArrayList<>())
                         .build();
 
                 return item;
@@ -128,10 +130,22 @@ public enum ItemDTO {
                         .id(null)   //Set in DB context
                         .available(dtoItem.available)
                         .owner(null)   //Set id from headers
-                        .request(null)    //No request
                         .build();
 
                 return item;
+            }
+
+            public static ReturnItemDTO toReturnItemDTO(Item item, Long itemRequestIdForWitchAdded) {
+                ReturnItemDTO dtoItem = ReturnItemDTO.builder()
+                        .id(item.getId())
+                        .name(item.getName())
+                        .description(item.getDescription())
+                        .available(item.getAvailable())
+                        .ownerId(item.getOwner().getId())
+                        .requestId(itemRequestIdForWitchAdded)
+                        .build();
+
+                return dtoItem;
             }
 
             public static ReturnItemDTO toReturnItemDTO(Item item) {
@@ -141,23 +155,19 @@ public enum ItemDTO {
                         .description(item.getDescription())
                         .available(item.getAvailable())
                         .ownerId(item.getOwner().getId())
-                        .requestId(item.getRequest() != null ? item.getRequest().getId() : null)
+                        .requestId(null)
                         .build();
 
                 return dtoItem;
             }
 
-            public static ReturnItemWithBookingsDTO toReturnItemWithBookingsDTO(Item item, List<Booking> bookings, List<Comment> comments) {
-                Booking lastBooking = BookingServiceSort.getLastBooking(bookings);
-                Booking nextBooking = BookingServiceSort.getNextBooking(bookings);
-
+            public static ReturnItemWithBookingsDTO toReturnItemWithBookingsDTO(Item item, Booking lastBooking, Booking nextBooking, List<Comment> comments) {
                 ReturnItemWithBookingsDTO dtoItem = ReturnItemWithBookingsDTO.returnItemWithBookingsDTOBuilder()
                         .id(item.getId())
                         .name(item.getName())
                         .description(item.getDescription())
                         .available(item.getAvailable())
                         .ownerId(item.getOwner().getId())
-                        .requestId(item.getRequest() != null ? item.getRequest().getId() : null)
                         .nextBooking(nextBooking != null ? BookingDTO.Controller.Mapper.toReturnBookItemSimpleDTO(nextBooking) : null)
                         .lastBooking(lastBooking != null ? BookingDTO.Controller.Mapper.toReturnBookItemSimpleDTO(lastBooking) : null)
                         .comments(comments != null ? comments.stream()

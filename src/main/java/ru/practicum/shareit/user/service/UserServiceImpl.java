@@ -47,6 +47,7 @@ public class UserServiceImpl implements UserService {
     @Transactional
     @Override
     public UserDTO.Controller.ReturnUserDTO addUser(User user) {
+        user.setId(null);
         User usr = userStore.save(user);
         return UserDTO.Controller.Mapper.toReturnUserDTO(usr);
     }

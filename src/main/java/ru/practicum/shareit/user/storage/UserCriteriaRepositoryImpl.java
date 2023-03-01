@@ -22,7 +22,7 @@ public class UserCriteriaRepositoryImpl implements UserCriteriaRepository {
         CriteriaBuilder cb = entityManager.getCriteriaBuilder();
         CriteriaQuery<Tuple> cr = cb.createTupleQuery();
         Root<User> root = cr.from(User.class);
-        Join<User, List<Booking>> joinItems = root.join("bookings");
+        Join<User, List<Booking>> joinItems = root.join("bookings", JoinType.LEFT);
 
         Path<Long> uId = root.get("id");
         Path<LocalDateTime> dateBooked = joinItems.get("start");
@@ -44,7 +44,7 @@ public class UserCriteriaRepositoryImpl implements UserCriteriaRepository {
         CriteriaBuilder cb = entityManager.getCriteriaBuilder();
         CriteriaQuery<Tuple> cr = cb.createTupleQuery();
         Root<User> root = cr.from(User.class);
-        Join<User, List<Booking>> joinItems = root.join("bookings");
+        Join<User, List<Booking>> joinItems = root.join("bookings", JoinType.LEFT);
 
         Path<Long> uId = root.get("id");
         Path<Item> itemBooked = joinItems.get("booked");
@@ -64,7 +64,7 @@ public class UserCriteriaRepositoryImpl implements UserCriteriaRepository {
         CriteriaBuilder cb = entityManager.getCriteriaBuilder();
         CriteriaQuery<Tuple> cr = cb.createTupleQuery();
         Root<User> root = cr.from(User.class);
-        Join<User, List<Item>> joinItems = root.join("items");
+        Join<User, List<Item>> joinItems = root.join("items", JoinType.LEFT);
 
         Path<Long> uId = root.get("id");
         Path<Long> iId = joinItems.get("id");
@@ -80,10 +80,25 @@ public class UserCriteriaRepositoryImpl implements UserCriteriaRepository {
 
     @Override
     public boolean isUserOwnerOrBooker(Long itemId, Long userId) {
-        if (isUserBooker(itemId, userId)) return true;
-        if (isUserOwner(itemId, userId)) return true;
+        CriteriaBuilder cb = entityManager.getCriteriaBuilder();
+        CriteriaQuery<Tuple> cr = cb.createTupleQuery();
+        Root<User> root = cr.from(User.class);
+        Join<User, List<Booking>> joinItems = root.join("bookings", JoinType.LEFT);
+        Join<User, List<Item>> joinItems2 = root.join("items", JoinType.LEFT);
 
-        return false;
+        Path<Long> uId = root.get("id");
+        Path<Item> itemBooked = joinItems.get("booked");
+        Path<Long> iId = itemBooked.get("id");      //book
+        Path<Long> oId = joinItems2.get("id");       //own
+
+        cr.multiselect(joinItems);
+
+        Predicate userPredicat = cb.equal(uId, cb.literal(userId));
+        Predicate itemBookPredicat = cb.equal(iId, cb.literal(itemId));
+        Predicate itemOwnPredicat = cb.equal(oId, cb.literal(itemId));
+        List<Tuple> tuples = entityManager.createQuery(cr.where(cb.and(userPredicat, cb.or(itemOwnPredicat, itemBookPredicat)))).getResultList();
+
+        return tuples.isEmpty() ? false : true;
     }
 
     @Override

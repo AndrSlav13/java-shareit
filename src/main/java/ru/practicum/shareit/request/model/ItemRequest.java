@@ -5,12 +5,12 @@ import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.user.model.User;
 
 import javax.persistence.*;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
-/**
- * TODO Sprint add-item-requests.
- */
 @Data
-@Builder
+@Builder(toBuilder = true)
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
@@ -27,9 +27,26 @@ public class ItemRequest {
     private User requestor;
 
     @ToString.Exclude
-    @OneToOne(mappedBy = "request", fetch = FetchType.LAZY)
-    private Item requested;
+    @ManyToMany(mappedBy = "requests", fetch = FetchType.LAZY)
+    private List<Item> items = new ArrayList<>();
 
-    @Column(name = "creationdate")
-    private String creationDate;
+    @Column(name = "created")
+    private LocalDateTime created;
+
+    public ItemRequest(Long id, String description, User requestor, LocalDateTime created) {
+        this.id = id;
+        this.description = description;
+        this.requestor = requestor;
+        this.created = created;
+    }
+
+    public void addRecommendedItems(Item item) {
+        items.add(item);
+        item.addRequests(this);
+    }
+
+    public void removeRecommendedItems(Item item) {
+        items.remove(item);
+        item.removeRequests(this);
+    }
 }

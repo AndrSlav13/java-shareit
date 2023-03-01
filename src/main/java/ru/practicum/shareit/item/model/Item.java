@@ -13,7 +13,7 @@ import java.util.List;
  * TODO Sprint add-controllers.
  */
 //Data for table
-@Builder
+@Builder(toBuilder = true)
 @Getter
 @Setter
 @ToString
@@ -34,9 +34,12 @@ public class Item {
     private User owner;  //user id
 
     @ToString.Exclude
-    @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "request_id")
-    private ItemRequest request;  //request id
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(
+            name = "requests_items_ids",
+            joinColumns = @JoinColumn(name = "item_id", referencedColumnName = "id"),
+            inverseJoinColumns = @JoinColumn(name = "request_id", referencedColumnName = "id"))
+    private List<ItemRequest> requests = new ArrayList<>();  //request id
 
     @ToString.Exclude
     @OneToMany(mappedBy = "booked", fetch = FetchType.LAZY)
@@ -76,5 +79,13 @@ public class Item {
     @Override
     public int hashCode() {
         return id.hashCode();
+    }
+
+    public void addRequests(ItemRequest request) {
+        requests.add(request);
+    }
+
+    public void removeRequests(ItemRequest request) {
+        requests.remove(request);
     }
 }

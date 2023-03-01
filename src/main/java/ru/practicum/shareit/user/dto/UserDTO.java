@@ -1,9 +1,9 @@
 package ru.practicum.shareit.user.dto;
 
-import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
-import lombok.RequiredArgsConstructor;
+import lombok.Getter;
+import lombok.Setter;
 import ru.practicum.shareit.user.model.User;
 
 import javax.validation.constraints.NotBlank;
@@ -23,23 +23,32 @@ public enum UserDTO {
     private interface Name {
         @NotNull
         @NotBlank
-        String getEmail();
+        String getName();
     }
 
     public enum Controller {
         ;
 
-        @Data
-        @RequiredArgsConstructor
-        @AllArgsConstructor
         @Builder
+        @Getter
+        @Setter
         public static class UpdateUserDTO {
             private String name;
             private String email;
+
+            public UpdateUserDTO(String name, String email) {
+                this.email = email;
+                this.name = name;
+            }
         }
 
-        @Data
+        @Getter
+        @Setter
         public static class NewUserDTO extends UpdateUserDTO implements Email, Name {
+            @Builder(builderMethodName = "newUserDTOBuilder")
+            public NewUserDTO(String name, String email) {
+                super(name, email);
+            }
         }
 
         @Data

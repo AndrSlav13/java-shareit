@@ -15,9 +15,9 @@ public interface BookingService extends BookingServiceSort {
 
     BookingDTO.Controller.ReturnBookItemDTO findByIdAndBookerOrIdAndOwner(Long bookingId, Long bookerId);
 
-    List<BookingDTO.Controller.ReturnBookItemDTO> findByBooker(Long bookerId, String state);
+    List<BookingDTO.Controller.ReturnBookItemDTO> findByBooker(Long bookerId, String state, Integer from, Integer size);
 
-    List<BookingDTO.Controller.ReturnBookItemDTO> findByOwner(Long bookerId, String state);
+    List<BookingDTO.Controller.ReturnBookItemDTO> findByOwner(Long bookerId, String state, Integer from, Integer size);
 
     static boolean validate(Booking booking) {
         if (booking == null) throw new HttpCustomException(HttpStatus.NOT_FOUND, "Wrong booking id");

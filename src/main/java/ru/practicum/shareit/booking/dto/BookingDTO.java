@@ -29,18 +29,15 @@ public enum BookingDTO {
     //Проверки для данных загружаемых в слой сервиса из контроллера и БД
     private interface Start {
         @NotNull
-        @DateTimeConstrain
         String getStart();
     }
 
     private interface End {
         @NotNull
-        @DateTimeConstrain
         String getEnd();
     }
 
     private interface Status {
-        @NotNull
         @EnumStatusBookingConstrain
         String getStatus();
     }
@@ -50,6 +47,7 @@ public enum BookingDTO {
 
         @Builder
         @Data
+        @DateTimeConstrain(start = "start", end = "end")
         public static class NewBookItemDTO implements Start, End, Status {
             String start;
             String end;

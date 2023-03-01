@@ -8,18 +8,17 @@ import ru.practicum.shareit.item.model.Comment;
 import ru.practicum.shareit.item.model.Item;
 
 import java.util.List;
-import java.util.Optional;
 
 public interface ItemService {
-    ItemDTO.Controller.ReturnItemDTO addItem(Item item, Long idOwner);
+    ItemDTO.Controller.ReturnItemDTO addItem(Item item, Long idOwner, Long itemRequest);
 
-    List<ItemDTO.Controller.ReturnItemWithBookingsDTO> getAllItems(Long ownerId);
+    List<ItemDTO.Controller.ReturnItemWithBookingsDTO> getAllItems(Long ownerId, Integer from, Integer size);
 
     ItemDTO.Controller.ReturnItemDTO updateItem(Item item, Long ownerId, Long itemId);
 
-    ItemDTO.Controller.ReturnItemWithBookingsDTO getItem(Long itemId, Optional<Long> idOwner);
+    ItemDTO.Controller.ReturnItemWithBookingsDTO getItem(Long itemId, Long idOwner);
 
-    List<ItemDTO.Controller.ReturnItemDTO> searchItems(String text);
+    List<ItemDTO.Controller.ReturnItemDTO> searchItems(String text, Integer from, Integer size);
 
     Item getSimpleItem(Long id);
 
