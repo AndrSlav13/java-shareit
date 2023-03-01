@@ -4,7 +4,6 @@ import lombok.Builder;
 import lombok.Data;
 import ru.practicum.shareit.item.model.Comment;
 
-import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -14,16 +13,6 @@ public enum CommentDTO {
     public static final DateTimeFormatter format = DateTimeFormatter.ISO_LOCAL_DATE_TIME;
 
     //Проверки для данных загружаемых в слой сервиса из контроллера и БД
-    private interface Id {
-        @NotNull
-        Long getId();
-    }
-
-    private interface Name {
-        @NotNull
-        @NotBlank
-        String getName();
-    }
 
     private interface Text {
         @NotNull
@@ -34,9 +23,11 @@ public enum CommentDTO {
     public enum Controller {
         ;
 
+        @Builder
         @Data
         public static class NewCommentDTO implements Text {
             String text;
+            String ttt;
         }
 
         @Builder

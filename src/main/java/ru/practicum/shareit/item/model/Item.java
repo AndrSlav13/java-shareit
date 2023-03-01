@@ -19,11 +19,13 @@ import java.util.List;
 @ToString
 @NoArgsConstructor
 @AllArgsConstructor
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
 @Entity
 @Table(name = "items")
 public class Item {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @EqualsAndHashCode.Include
     private Long id;
     private String name;
     private String description;
@@ -67,18 +69,6 @@ public class Item {
     public void removeComment(Comment comment) {
         comments.remove(comment);
         comment.setItemCommented(null);
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (o == null || o.getClass() != this.getClass()) return false;
-        if (this == o || this.getId().equals(((Item) o).getId())) return true;
-        return false;
-    }
-
-    @Override
-    public int hashCode() {
-        return id.hashCode();
     }
 
     public void addRequests(ItemRequest request) {

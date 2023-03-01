@@ -146,6 +146,90 @@ public class BookingRepositoryTest {
         assertThat(b).isEmpty();
     }
 
+    @Test
+    void findByIdAndBookerOrIdAndOwnerTest() {
+        User user = User.builder().items(new ArrayList<>()).bookings(new ArrayList<>()).requests(new ArrayList<>())
+                .email(userEmail).name(userName).build();
+        User user2 = User.builder().items(new ArrayList<>()).bookings(new ArrayList<>()).requests(new ArrayList<>())
+                .email(userEmail2).name(userName2).build();
+        Item item = Item.builder().requests(new ArrayList<>()).bookings(new ArrayList<>()).comments(new ArrayList<>())
+                .description(itemDescription).name(itemName).available(itemAvailable).build();
+        Item item2 = Item.builder().requests(new ArrayList<>()).bookings(new ArrayList<>()).comments(new ArrayList<>())
+                .description(itemDescription2).name(itemName2).available(itemAvailable2).build();
+        Booking booking = Booking.builder().start(bookingStart).end(bookingEnd).status(BookingStatus.WAITING).build();
+
+        user = userRepository.save(user);
+        user2 = userRepository.save(user2);
+        item = item.toBuilder().owner(user).build();
+        item = itemRepository.save(item);
+        item2 = item2.toBuilder().owner(user2).build();
+        item2 = itemRepository.save(item2);
+        booking = booking.toBuilder().booker(user).booked(item2)
+                .start(LocalDateTime.now().plusSeconds(1))
+                .end(LocalDateTime.now().plusSeconds(2)).build();
+        booking = bookingRepository.save(booking);
+
+        List<Booking> b = bookingRepository.findByIdAndBookerOrIdAndOwner(booking.getId(), user.getId());
+        assertThat(b).isNotEmpty().hasSize(1);
+        b = bookingRepository.findByIdAndBookerOrIdAndOwner(booking.getId(), user2.getId());
+        assertThat(b).isNotEmpty().hasSize(1);
+        b = bookingRepository.findByIdAndBookerOrIdAndOwner(-1L, user.getId());
+        assertThat(b).isEmpty();
+        b = bookingRepository.findByIdAndBookerOrIdAndOwner(booking.getId(), -1L);
+        assertThat(b).isEmpty();
+    }
+
+    @Test
+    void lastNextBookingsTest() {
+        User user = User.builder().items(new ArrayList<>()).bookings(new ArrayList<>()).requests(new ArrayList<>())
+                .email(userEmail).name(userName).build();
+        User user2 = User.builder().items(new ArrayList<>()).bookings(new ArrayList<>()).requests(new ArrayList<>())
+                .email(userEmail2).name(userName2).build();
+        Item item = Item.builder().requests(new ArrayList<>()).bookings(new ArrayList<>()).comments(new ArrayList<>())
+                .description(itemDescription).name(itemName).available(itemAvailable).build();
+        Item item2 = Item.builder().requests(new ArrayList<>()).bookings(new ArrayList<>()).comments(new ArrayList<>())
+                .description(itemDescription2).name(itemName2).available(itemAvailable2).build();
+        Booking booking = Booking.builder().start(bookingStart).end(bookingEnd).status(BookingStatus.WAITING).build();
+        Booking booking2 = Booking.builder().start(bookingStart).end(bookingEnd).status(BookingStatus.WAITING).build();
+
+        user = userRepository.save(user);
+        user2 = userRepository.save(user2);
+        item = item.toBuilder().owner(user).build();
+        item = itemRepository.save(item);
+        user.addItem(item);
+        item2 = item2.toBuilder().owner(user2).build();
+        item2 = itemRepository.save(item2);
+        user2.addItem(item2);
+        booking = booking.toBuilder().booker(user).booked(item2)
+                .start(LocalDateTime.now().plusSeconds(1))
+                .end(LocalDateTime.now().plusSeconds(2)).build();
+        booking = bookingRepository.save(booking);
+        user.addBooking(booking);
+        item2.addBooking(booking);
+
+
+        try {
+            Thread.sleep(2 * 1000);
+        } catch (InterruptedException ie) {
+            Thread.currentThread().interrupt();
+        }
+
+        booking2 = booking2.toBuilder().booker(user2).booked(item)
+                .start(LocalDateTime.now().plusDays(1))
+                .end(LocalDateTime.now().plusDays(2)).build();
+        booking2 = bookingRepository.save(booking2);
+
+        List<Booking> b = bookingRepository.findNextBookings(user.getId(), List.of(item.getId()), LocalDateTime.now());
+        assertThat(b).isNotEmpty().hasSize(1);
+        b = bookingRepository.findNextBookings(user.getId(), List.of(item2.getId()), LocalDateTime.now());
+        assertThat(b).isEmpty();
+        b = bookingRepository.findLastBookings(user2.getId(), List.of(item.getId()), LocalDateTime.now());
+        assertThat(b).isEmpty();
+        b = bookingRepository.findLastBookings(user2.getId(), List.of(item2.getId()), LocalDateTime.now());
+        assertThat(b).isNotEmpty().hasSize(1);
+        b = bookingRepository.findNextBookings(user2.getId(), List.of(item2.getId()), LocalDateTime.now());
+        assertThat(b).isEmpty();
+    }
 
 
     String userEmail = "qwerty@yandex.ru";

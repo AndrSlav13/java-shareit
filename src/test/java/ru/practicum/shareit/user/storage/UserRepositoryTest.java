@@ -100,18 +100,18 @@ class UserRepositoryTest {
 
         user = userRepository.save(user);
         user2 = userRepository.save(user2);
-            item = item.toBuilder().owner(user).build();
+        item = item.toBuilder().owner(user).build();
         item = itemRepository.save(item);
         user.addItem(item);
         em.persist(user);
-            item2 = item2.toBuilder().owner(user2).build();
+        item2 = item2.toBuilder().owner(user2).build();
         item2 = itemRepository.save(item2);
         user2.addItem(item2);
         em.persist(user2);
-            booking = booking.toBuilder().booker(user2).booked(item)
-                    .start(LocalDateTime.now().plusSeconds(1))
-                    .end(LocalDateTime.now().plusSeconds(2)).build();
-            booking2 = booking.toBuilder().booker(user2).booked(item2)
+        booking = booking.toBuilder().booker(user2).booked(item)
+                .start(LocalDateTime.now().plusSeconds(1))
+                .end(LocalDateTime.now().plusSeconds(2)).build();
+        booking2 = booking.toBuilder().booker(user2).booked(item2)
                 .start(LocalDateTime.now().plusDays(1))
                 .end(LocalDateTime.now().plusDays(2)).build();
         try {
@@ -159,20 +159,20 @@ class UserRepositoryTest {
         user2 = userRepository.save(user2);
         item = item.toBuilder().owner(user).build();
         item = itemRepository.save(item);
-            user.addItem(item);
-            em.persist(user);
+        user.addItem(item);
+        em.persist(user);
         item2 = item2.toBuilder().owner(user2).build();
         item2 = itemRepository.save(item2);
-            user2.addItem(item2);
-            em.persist(user2);
+        user2.addItem(item2);
+        em.persist(user2);
         booking = booking.toBuilder().booker(user2).booked(item)
                 .start(LocalDateTime.now().plusSeconds(1))
                 .end(LocalDateTime.now().plusSeconds(2)).build();
         booking = bookingRepository.save(booking);
-            user2.addBooking(booking);
-            em.persist(user2);
-            item.addBooking(booking);
-            em.persist(item);
+        user2.addBooking(booking);
+        em.persist(user2);
+        item.addBooking(booking);
+        em.persist(item);
 
         boolean b = userRepository.isUserBooker(item.getId(), user2.getId());
         assertThat(b).isTrue();

@@ -13,11 +13,13 @@ import java.util.List;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
 @Entity
 @Table(name = "users")
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @EqualsAndHashCode.Include
     private Long id;
     private String name;
     @Column(nullable = false, unique = true)
@@ -62,17 +64,5 @@ public class User {
     public void removeRequest(ItemRequest it) {
         requests.remove(it);
         it.setRequestor(null);
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (o == null || o.getClass() != this.getClass()) return false;
-        if (this == o || this.getId().equals(((User) o).getId())) return true;
-        return false;
-    }
-
-    @Override
-    public int hashCode() {
-        return id.hashCode();
     }
 }
