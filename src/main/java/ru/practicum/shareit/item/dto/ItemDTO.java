@@ -6,24 +6,25 @@ package ru.practicum.shareit.item.dto;
 
 import lombok.Builder;
 import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
+import ru.practicum.shareit.booking.dto.BookingDTO;
+import ru.practicum.shareit.booking.model.Booking;
+import ru.practicum.shareit.item.model.Comment;
 import ru.practicum.shareit.item.model.Item;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
-import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
 
 //enum т.к. внутренний класс не сможет быть иначе static (если class вместо static).
 // А если не static, то надо создавать экземпляры внешних классов - enum здесь это namespace
 //get - значит проверка только когда берется значение. Если не используется, то и не проверяется
 public enum ItemDTO {
     ;
-    public static final DateTimeFormatter format = DateTimeFormatter.ISO_LOCAL_DATE_TIME;
-
     //Проверки для данных загружаемых в слой сервиса из контроллера и БД
-    private interface Id {
-        @NotNull
-        Integer getId();
-    }
 
     private interface Name {
         @NotNull
@@ -44,13 +45,16 @@ public enum ItemDTO {
     public enum Controller {
         ;
 
+        @Builder
         @Data
         public static class NewItemDTO implements Name, Description, Available {
             String name;
             String description;
             Boolean available;
+            Long requestId;
         }
 
+        @Builder
         @Data
         public static class UpdateItemDTO {
             String name;
@@ -59,29 +63,47 @@ public enum ItemDTO {
         }
 
         @Builder
-        @Data
-        public static class ReturnItemDTO implements Id, Name, Description, Available {
-            Integer id;
+        @Getter
+        @Setter
+        public static class ReturnItemDTO {
+            Long id;
             String name;
             String description;
             Boolean available;
-            Integer ownerId;
-            Integer requestId;
+            Long ownerId;
+            Long requestId;
+
+            public ReturnItemDTO(Long id, String name, String description, Boolean available, Long ownerId, Long requestId) {
+                this.id = id;
+                this.name = name;
+                this.description = description;
+                this.available = available;
+                this.ownerId = ownerId;
+                this.requestId = requestId;
+            }
+        }
+
+        @Getter
+        @Setter
+        public static class ReturnItemWithBookingsDTO extends ReturnItemDTO {
+            BookingDTO.Controller.ReturnBookItemSimpleDTO lastBooking;
+            BookingDTO.Controller.ReturnBookItemSimpleDTO nextBooking;
+            List<CommentDTO.Controller.ReturnCommentDTO> comments;
+
+            @Builder(builderMethodName = "returnItemWithBookingsDTOBuilder")
+            public ReturnItemWithBookingsDTO(Long id, String name, String description, Boolean available, Long ownerId, Long requestId,
+                                             BookingDTO.Controller.ReturnBookItemSimpleDTO lastBooking,
+                                             BookingDTO.Controller.ReturnBookItemSimpleDTO nextBooking,
+                                             List<CommentDTO.Controller.ReturnCommentDTO> comments) {
+                super(id, name, description, available, ownerId, requestId);
+                this.lastBooking = lastBooking;
+                this.nextBooking = nextBooking;
+                this.comments = comments;
+
+            }
         }
 
         public static class Mapper {
-            public static Item toItem(NewItemDTO dtoItem, Integer idOwner) {
-                Item item = Item.builder()
-                        .name(dtoItem.name)
-                        .description(dtoItem.description)
-                        .id(null)   //Set in DB context
-                        .available(dtoItem.available)
-                        .ownerId(idOwner)   //Set id from headers
-                        .requestId(null)    //No request
-                        .build();
-
-                return item;
-            }
 
             public static Item toItem(NewItemDTO dtoItem) {
                 Item item = Item.builder()
@@ -89,8 +111,10 @@ public enum ItemDTO {
                         .description(dtoItem.description)
                         .id(null)   //Set in DB context
                         .available(dtoItem.available)
-                        .ownerId(null)   //Set id from headers
-                        .requestId(null)    //No request
+                        .owner(null)   //Set id from headers
+                        .bookings(new ArrayList<>())
+                        .comments(new ArrayList<>())
+                        .requests(new ArrayList<>())
                         .build();
 
                 return item;
@@ -102,11 +126,23 @@ public enum ItemDTO {
                         .description(dtoItem.description)
                         .id(null)   //Set in DB context
                         .available(dtoItem.available)
-                        .ownerId(null)   //Set id from headers
-                        .requestId(null)    //No request
+                        .owner(null)   //Set id from headers
                         .build();
 
                 return item;
+            }
+
+            public static ReturnItemDTO toReturnItemDTO(Item item, Long itemRequestIdForWitchAdded) {
+                ReturnItemDTO dtoItem = ReturnItemDTO.builder()
+                        .id(item.getId())
+                        .name(item.getName())
+                        .description(item.getDescription())
+                        .available(item.getAvailable())
+                        .ownerId(item.getOwner().getId())
+                        .requestId(itemRequestIdForWitchAdded)
+                        .build();
+
+                return dtoItem;
             }
 
             public static ReturnItemDTO toReturnItemDTO(Item item) {
@@ -115,8 +151,25 @@ public enum ItemDTO {
                         .name(item.getName())
                         .description(item.getDescription())
                         .available(item.getAvailable())
-                        .ownerId(item.getOwnerId())
-                        .requestId(item.getRequestId())
+                        .ownerId(item.getOwner().getId())
+                        .requestId(null)
+                        .build();
+
+                return dtoItem;
+            }
+
+            public static ReturnItemWithBookingsDTO toReturnItemWithBookingsDTO(Item item, Booking lastBooking, Booking nextBooking, List<Comment> comments) {
+                ReturnItemWithBookingsDTO dtoItem = ReturnItemWithBookingsDTO.returnItemWithBookingsDTOBuilder()
+                        .id(item.getId())
+                        .name(item.getName())
+                        .description(item.getDescription())
+                        .available(item.getAvailable())
+                        .ownerId(item.getOwner().getId())
+                        .nextBooking(nextBooking != null ? BookingDTO.Controller.Mapper.toReturnBookItemSimpleDTO(nextBooking) : null)
+                        .lastBooking(lastBooking != null ? BookingDTO.Controller.Mapper.toReturnBookItemSimpleDTO(lastBooking) : null)
+                        .comments(comments != null ? comments.stream()
+                                .map(com -> CommentDTO.Controller.Mapper.toReturnCommentDTO(com))
+                                .collect(Collectors.toList()) : null)
                         .build();
 
                 return dtoItem;
@@ -124,47 +177,4 @@ public enum ItemDTO {
         }
     }
 
-    //Из/в базу данных?
-    public enum Database {
-        ;
-
-        @Builder    //DB 1
-        @Data
-        public static class DBItemDTO implements Id, Name, Description {
-            Integer id;
-            String name;
-            String description;
-            Boolean available;
-            Integer ownerId;
-            Integer requestId;
-        }
-
-        public static class Mapper {
-            public static Item toItem(DBItemDTO dtoItem) {
-                Item item = Item.builder()
-                        .id(dtoItem.id)
-                        .name(dtoItem.name)
-                        .description(dtoItem.description)
-                        .available(dtoItem.available)
-                        .ownerId(dtoItem.ownerId)
-                        .requestId(dtoItem.requestId)
-                        .build();
-
-                return item;
-            }
-
-            public static DBItemDTO toDBItemDTO(Item item) {
-                DBItemDTO dbItem = DBItemDTO.builder()
-                        .id(item.getId())
-                        .name(item.getName())
-                        .description(item.getDescription())
-                        .available(item.getAvailable())
-                        .ownerId(item.getOwnerId())
-                        .requestId(item.getRequestId())
-                        .build();
-
-                return dbItem;
-            }
-        }
-    }
 }

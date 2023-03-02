@@ -16,15 +16,15 @@ public class UserController {
 
     @GetMapping(path = "/{id}")
     @ResponseBody
-    public UserDTO.Controller.ReturnUserDTO getUserById(@PathVariable Integer id) {
+    public UserDTO.Controller.ReturnUserDTO getUserById(@PathVariable Long id) {
         return userService.getUserById(id);
     }
 
     @PatchMapping(path = "/{id}")
     @ResponseBody
-    public UserDTO.Controller.ReturnUserDTO getUserById(@PathVariable(value = "id") Integer idUser,
-                                                        @RequestBody @Valid UserDTO.Controller.NewUserDTO userDTO) {
-        return userService.updateUserById(UserDTO.Controller.Mapper.toUser(userDTO, idUser));
+    public UserDTO.Controller.ReturnUserDTO updateUserById(@PathVariable(value = "id") Long idUser,
+                                                           @RequestBody @Valid UserDTO.Controller.UpdateUserDTO userDTO) {
+        return userService.updateUserById(UserDTO.Controller.Mapper.toUser(userDTO), idUser);
     }
 
     @GetMapping
@@ -41,7 +41,7 @@ public class UserController {
 
     @DeleteMapping(path = "/{id}")
     @ResponseBody
-    public List<UserDTO.Controller.ReturnUserDTO> deleteUserById(@PathVariable Integer id) {
+    public List<UserDTO.Controller.ReturnUserDTO> deleteUserById(@PathVariable Long id) {
         return userService.deleteUserById(id);
     }
 

@@ -4,6 +4,8 @@ import lombok.Builder;
 import lombok.Data;
 import ru.practicum.shareit.booking.model.Booking;
 import ru.practicum.shareit.booking.model.BookingStatus;
+import ru.practicum.shareit.item.dto.ItemDTO;
+import ru.practicum.shareit.user.dto.UserDTO;
 
 import javax.validation.constraints.NotNull;
 import java.time.Instant;
@@ -24,57 +26,20 @@ public enum BookingDTO {
         return stringToLocalDateTime(str).atZone(ZoneId.systemDefault()).toInstant();
     }
 
-    public static String localDateTimeToString(LocalDateTime loc) {
-        return loc.format(format);
-    }
-
-    public static Long instantToLong(Instant ins) {
-        return ins.toEpochMilli();
-    }
-
-    public static String instantToString(Instant ins) {
-        return LocalDateTime.ofInstant(ins, ZoneId.systemDefault()).format(format);
-    }
-
     //Проверки для данных загружаемых в слой сервиса из контроллера и БД
-    private interface Id {
-        @NotNull
-        Integer getId();
-    }
-
     private interface Start {
         @NotNull
-        @DateTimeConstrain
         String getStart();
     }
 
     private interface End {
         @NotNull
-        @DateTimeConstrain
         String getEnd();
     }
 
-    private interface StartLong {
-        @NotNull
-        @DateTimeConstrainLong
-        Long getStart();
-    }
-
-    private interface EndLong {
-        @NotNull
-        @DateTimeConstrainLong
-        Long getEnd();
-    }
-
     private interface Status {
-        @NotNull
         @EnumStatusBookingConstrain
         String getStatus();
-    }
-
-    private interface ItemId {
-        @NotNull
-        Integer getItemId();
     }
 
     public enum Controller {
@@ -82,34 +47,40 @@ public enum BookingDTO {
 
         @Builder
         @Data
-        public static class NewBookItemDTO implements Start, End, ItemId {
+        @DateTimeConstrain(start = "start", end = "end")
+        public static class NewBookItemDTO implements Start, End, Status {
             String start;
             String end;
-            Integer itemId;
-            Integer bookerId;
+            Long itemId;
+            Long bookerId;
             String status;
         }
 
         @Builder
         @Data
-        public static class ReturnBookItemDTO implements Id, Start, End, Status {
-            Integer id;
+        public static class ReturnBookItemDTO {
+            Long id;
             String start;
             String end;
-            Integer itemId;
-            Integer bookerId;
+            ItemDTO.Controller.ReturnItemDTO item;
+            UserDTO.Controller.ReturnUserDTO booker;
             String status;
+        }
+
+        @Builder
+        @Data
+        public static class ReturnBookItemSimpleDTO {
+            Long id;
+            Long bookerId;
         }
 
         public static class Mapper {
             public static Booking toBooking(NewBookItemDTO dtoItem) {
                 Booking item = Booking.builder()
                         .id(null)
-                        .start(stringToInstant(dtoItem.start))
-                        .end(stringToInstant(dtoItem.end))
-                        .itemId(dtoItem.itemId)
-                        .bookerId(dtoItem.bookerId)
-                        .status(BookingStatus.valueOf(dtoItem.status))
+                        .start(LocalDateTime.parse(dtoItem.start, format))
+                        .end(LocalDateTime.parse(dtoItem.end, format))
+                        .status(dtoItem.status == null || !BookingStatus.contains(dtoItem.status) ? BookingStatus.WAITING : BookingStatus.valueOf(dtoItem.status))
                         .build();
 
                 return item;
@@ -118,58 +89,23 @@ public enum BookingDTO {
             public static ReturnBookItemDTO toReturnBookItemDTO(Booking bItem) {
                 ReturnBookItemDTO item = ReturnBookItemDTO.builder()
                         .id(bItem.getId())
-                        .start(instantToString(bItem.getStart()))
-                        .end(instantToString(bItem.getEnd()))
-                        .itemId(bItem.getItemId())
-                        .bookerId(bItem.getBookerId())
+                        .start(bItem.getStart().format(format))
+                        .end(bItem.getEnd().format(format))
+                        .item(ItemDTO.Controller.Mapper.toReturnItemDTO(bItem.getBooked()))
+                        .booker(UserDTO.Controller.Mapper.toReturnUserDTO(bItem.getBooker()))
                         .status(bItem.getStatus().name())
                         .build();
 
                 return item;
             }
-        }
-    }
 
-    //Из/в базу данных?
-    public enum Database {
-        ;
-
-        @Builder    //DB 2
-        @Data
-        public static class DBScheduleDTO implements Id, StartLong, EndLong, Status {
-            Integer id;
-            Long start;
-            Long end;
-            Integer itemId;
-            Integer bookerId;
-            String status;
-        }
-
-        public static class Mapper {
-            public static DBScheduleDTO toDBScheduleDTO(Booking item) {
-                DBScheduleDTO it = DBScheduleDTO.builder()
-                        .id(item.getId())
-                        .start(instantToLong(item.getStart()))
-                        .end(instantToLong(item.getEnd()))
-                        .itemId(item.getItemId())
-                        .bookerId(item.getBookerId())
-                        .status(item.getStatus().name())
+            public static ReturnBookItemSimpleDTO toReturnBookItemSimpleDTO(Booking bItem) {
+                ReturnBookItemSimpleDTO item = ReturnBookItemSimpleDTO.builder()
+                        .id(bItem.getId())
+                        .bookerId(bItem.getBooker().getId())
                         .build();
 
-                return it;
-            }
-
-            public static Booking toBooking(DBScheduleDTO item) {
-                Booking it = Booking.builder()
-                        .id(item.id)
-                        .start(Instant.ofEpochMilli(item.start))
-                        .end(Instant.ofEpochMilli(item.end))
-                        .itemId(item.itemId)
-                        .bookerId(item.bookerId)
-                        .status(BookingStatus.valueOf(item.status))
-                        .build();
-
-                return it;
+                return item;
             }
         }
     }
