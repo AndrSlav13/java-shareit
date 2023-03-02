@@ -24,6 +24,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -64,6 +65,64 @@ class RequestControllerTest {
                 .andExpect(MockMvcResultMatchers.jsonPath("$.description").value(request.getDescription()))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.requestorId").value(request.getRequestor().getId()))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.items[0].id").value(item.getId()));
+    }
+
+    @Test
+    void getRequestsByRequestorTest() throws Exception {
+        Mockito
+                .when(requestService.getRequestsByRequestorId(Mockito.any()))
+                .thenAnswer(i -> {
+                    user = user.toBuilder().id((Long) (i.getArguments()[0])).build();
+                    request = request.toBuilder().requestor(user).build();
+                    return List.of(ItemRequestDTO.Controller.Mapper.toDTO(request));
+                });
+
+        mvc.perform(get("/requests")
+                        .characterEncoding(StandardCharsets.UTF_8)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON)
+                        .header("X-Sharer-User-Id", 99L))
+                .andExpect(status().isOk())
+                .andExpect(MockMvcResultMatchers.jsonPath("$[0].requestorId").value(99L));
+    }
+
+    @Test
+    void getRequestsByNotRequestorTest() throws Exception {
+        Mockito
+                .when(requestService.getRequestsByNotRequestorId(Mockito.any(), Mockito.any(), Mockito.any()))
+                .thenAnswer(i -> {
+                    user = user.toBuilder().id((Long) (i.getArguments()[0])).build();
+                    request = request.toBuilder().requestor(user).build();
+                    return List.of(ItemRequestDTO.Controller.Mapper.toDTO(request));
+                });
+
+        mvc.perform(get("/requests/all")
+                        .characterEncoding(StandardCharsets.UTF_8)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON)
+                        .header("X-Sharer-User-Id", 99L))
+                .andExpect(status().isOk())
+                .andExpect(MockMvcResultMatchers.jsonPath("$[0].requestorId").value(99L));
+    }
+
+    @Test
+    void getRequestByIdTest() throws Exception {
+        Mockito
+                .when(requestService.getItemRequest(Mockito.any(), Mockito.any()))
+                .thenAnswer(i -> {
+                    user = user.toBuilder().id((Long) (i.getArguments()[0])).build();
+                    request = request.toBuilder().requestor(user).build();
+                    return ItemRequestDTO.Controller.Mapper.toDTO(request);
+                });
+
+        mvc.perform(get("/requests/{id}", request.getId())
+                        .characterEncoding(StandardCharsets.UTF_8)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON)
+                        .header("X-Sharer-User-Id", 99L))
+                .andExpect(status().isOk())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.requestorId").value(99L));
+
     }
 
 

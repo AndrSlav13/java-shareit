@@ -23,6 +23,7 @@ import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -84,6 +85,31 @@ public class UserControllerTest {
                         .accept(MediaType.APPLICATION_JSON)
                         .header("X-Sharer-User-Id", user.getId()))
                 .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    void updateUserByIdTest() throws Exception {
+        userDTO = UserDTO.Controller.NewUserDTO.newUserDTOBuilder()
+                .name(user2.getName())
+                .email(user2.getEmail())
+                .build();
+        Mockito
+                .when(userService.updateUserById(Mockito.any(), Mockito.any()))
+                .thenAnswer(i -> {
+                    User b = (User) (i.getArguments()[0]);
+                    user = user.toBuilder().name(b.getName()).email(b.getEmail()).build();
+                    return UserDTO.Controller.Mapper.toReturnUserDTO(user);
+                });
+
+        mvc.perform(patch("/users/{id}", user.getId())
+                        .content(mapper.writeValueAsString(userDTO))
+                        .characterEncoding(StandardCharsets.UTF_8)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON)
+                        .header("X-Sharer-User-Id", user.getId()))
+                .andExpect(status().isOk())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.name").value(user2.getName()))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.email").value(user2.getEmail()));
     }
 
 

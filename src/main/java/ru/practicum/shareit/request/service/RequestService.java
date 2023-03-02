@@ -4,14 +4,13 @@ import ru.practicum.shareit.request.dto.ItemRequestDTO;
 import ru.practicum.shareit.request.model.ItemRequest;
 
 import java.util.List;
-import java.util.Optional;
 
 public interface RequestService {
     ItemRequestDTO.Controller.ReturnItemRequestDTO addRequest(ItemRequest request, Long idOwner);
 
-    List<ItemRequestDTO.Controller.ReturnItemRequestDTO> getRequestsByRequestorId(Optional<Long> idOwner);
+    List<ItemRequestDTO.Controller.ReturnItemRequestDTO> getRequestsByRequestorId(Long idOwner);
 
-    List<ItemRequestDTO.Controller.ReturnItemRequestDTO> getRequestsByNotRequestorId(Optional<Long> idOwner, Integer from, Integer size);
+    List<ItemRequestDTO.Controller.ReturnItemRequestDTO> getRequestsByNotRequestorId(Long idOwner, Integer from, Integer size);
 
     ItemRequest getSimpleItemRequest(Long id);
 

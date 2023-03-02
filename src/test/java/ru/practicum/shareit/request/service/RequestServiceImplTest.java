@@ -116,7 +116,7 @@ class RequestServiceImplTest {
                 .when(userService.getSimpleUser(Mockito.anyLong()))
                 .thenReturn(user.toBuilder().items(new ArrayList<>()).build());
         MockedStatic<UserService> userMockStatic = Mockito.mockStatic(UserService.class);
-        List<ItemRequestDTO.Controller.ReturnItemRequestDTO> rez = requestService.getRequestsByRequestorId(Optional.of(userId));
+        List<ItemRequestDTO.Controller.ReturnItemRequestDTO> rez = requestService.getRequestsByRequestorId(userId);
 
         assertEquals(requestId, rez.get(0).getId());
         userMockStatic.verify(() -> UserService.validate(any(User.class)), Mockito.times(1));
@@ -128,7 +128,7 @@ class RequestServiceImplTest {
         Mockito
                 .when(requestRepository.findAllByNotRequestorId(Mockito.any(Long.class), Mockito.any(Integer.class), Mockito.any(Integer.class)))
                 .thenReturn(List.of(request));
-        List<ItemRequestDTO.Controller.ReturnItemRequestDTO> rez = requestService.getRequestsByNotRequestorId(Optional.of(userId), 0, 1);
+        List<ItemRequestDTO.Controller.ReturnItemRequestDTO> rez = requestService.getRequestsByNotRequestorId(userId, 0, 1);
 
         assertEquals(requestId, rez.get(0).getId());
     }

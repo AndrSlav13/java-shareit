@@ -22,7 +22,6 @@ import javax.persistence.PersistenceContext;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -71,10 +70,10 @@ class RequestServiceImplTestIntegral {
                         .build(), userId).getId();
         itemId = itemService.addItem(item, userId, requestId).getId();
 
-        List<ItemRequestDTO.Controller.ReturnItemRequestDTO> it = requestService.getRequestsByRequestorId(Optional.of(userId));
+        List<ItemRequestDTO.Controller.ReturnItemRequestDTO> it = requestService.getRequestsByRequestorId(userId);
         assertThat(it).isNotEmpty();
         assertThat(it.get(0).getDescription()).isEqualTo(request.getDescription());
-        it = requestService.getRequestsByRequestorId(Optional.of(userId2));
+        it = requestService.getRequestsByRequestorId(userId2);
         assertThat(it).isEmpty();
     }
 
@@ -88,9 +87,9 @@ class RequestServiceImplTestIntegral {
                         .build(), userId).getId();
         itemId = itemService.addItem(item, userId, requestId).getId();
 
-        List<ItemRequestDTO.Controller.ReturnItemRequestDTO> it = requestService.getRequestsByNotRequestorId(Optional.of(userId), 0, 2);
+        List<ItemRequestDTO.Controller.ReturnItemRequestDTO> it = requestService.getRequestsByNotRequestorId(userId, 0, 2);
         assertThat(it).isEmpty();
-        it = requestService.getRequestsByNotRequestorId(Optional.of(userId2), 0, 2);
+        it = requestService.getRequestsByNotRequestorId(userId2, 0, 2);
         assertThat(it).isNotEmpty();
         assertThat(it.get(0).getDescription()).isEqualTo(request.getDescription());
     }

@@ -61,8 +61,8 @@ public class ItemController {
 
     @PostMapping("{itemId}/comment")
     public CommentDTO.Controller.ReturnCommentDTO addComment(@RequestBody @Valid CommentDTO.Controller.NewCommentDTO commentDTO,
-                                                          @PathVariable Long itemId,
-                                                          @RequestHeader("X-Sharer-User-Id") Optional<Long> idOwner) {
+                                                             @PathVariable Long itemId,
+                                                             @RequestHeader("X-Sharer-User-Id") Optional<Long> idOwner) {
         return itemService.addComment(CommentDTO.Controller.Mapper.toComment(commentDTO), idOwner.get(), itemId);
     }
 }

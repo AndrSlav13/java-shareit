@@ -35,13 +35,6 @@ public class ItemRequest {
     @Column(name = "created")
     private LocalDateTime created;
 
-    public ItemRequest(Long id, String description, User requestor, LocalDateTime created) {
-        this.id = id;
-        this.description = description;
-        this.requestor = requestor;
-        this.created = created;
-    }
-
     public void addRecommendedItems(Item item) {
         items.add(item);
         item.addRequests(this);

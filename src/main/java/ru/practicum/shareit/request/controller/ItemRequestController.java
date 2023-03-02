@@ -29,12 +29,18 @@ public class ItemRequestController {
 
     @GetMapping
     public List<ItemRequestDTO.Controller.ReturnItemRequestDTO> getRequests(@RequestHeader("X-Sharer-User-Id") Optional<Long> idOwner) {
-        return requestService.getRequestsByRequestorId(idOwner);
+        if (idOwner.equals(null) || idOwner.isEmpty())
+            throw new HttpCustomException(HttpStatus.NOT_FOUND, "Needed user id");
+
+        return requestService.getRequestsByRequestorId(idOwner.get());
     }
 
     @GetMapping(path = "/{id}")
     public ItemRequestDTO.Controller.ReturnItemRequestDTO getRequestById(@RequestHeader("X-Sharer-User-Id") Optional<Long> idOwner,
                                                                          @PathVariable Long id) {
+        if (idOwner.equals(null) || idOwner.isEmpty())
+            throw new HttpCustomException(HttpStatus.NOT_FOUND, "Needed user id");
+
         return requestService.getItemRequest(idOwner.get(), id);
     }
 
@@ -42,7 +48,8 @@ public class ItemRequestController {
     public List<ItemRequestDTO.Controller.ReturnItemRequestDTO> getRequests(@RequestHeader("X-Sharer-User-Id") Optional<Long> idOwner,
                                                                             @RequestParam(defaultValue = "0") Integer from,
                                                                             @RequestParam(defaultValue = "10") @Min(1) Integer size) {
+
         if (size < 1) throw new HttpCustomException(HttpStatus.BAD_REQUEST, "Wrong page size");
-        return requestService.getRequestsByNotRequestorId(idOwner, from, size);
+        return requestService.getRequestsByNotRequestorId(idOwner.orElse(null), from, size);
     }
 }

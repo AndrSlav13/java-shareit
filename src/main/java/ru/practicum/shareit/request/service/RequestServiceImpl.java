@@ -12,7 +12,6 @@ import ru.practicum.shareit.user.model.User;
 import ru.practicum.shareit.user.service.UserService;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -60,23 +59,19 @@ public class RequestServiceImpl implements RequestService {
 
     @Transactional
     @Override
-    public List<ItemRequestDTO.Controller.ReturnItemRequestDTO> getRequestsByRequestorId(Optional<Long> idOwner) {
-        if (idOwner.isEmpty() || idOwner.equals(null))
-            throw new HttpCustomException(HttpStatus.NOT_FOUND, "Needed user id");
-        User user = userService.getSimpleUser(idOwner.get());
+    public List<ItemRequestDTO.Controller.ReturnItemRequestDTO> getRequestsByRequestorId(Long idOwner) {
+        User user = userService.getSimpleUser(idOwner);
         UserService.validate(user);
 
-        return requestStore.findAllByRequestorId(idOwner.get()).stream()
+        return requestStore.findAllByRequestorId(idOwner).stream()
                 .map(it -> ItemRequestDTO.Controller.Mapper.toDTO(it)).collect(Collectors.toList());
     }
 
     @Transactional
     @Override
-    public List<ItemRequestDTO.Controller.ReturnItemRequestDTO> getRequestsByNotRequestorId(Optional<Long> idOwner, Integer from, Integer size) {
-        Long id = null;
-        if (!idOwner.equals(null) && !idOwner.isEmpty()) id = idOwner.get();
+    public List<ItemRequestDTO.Controller.ReturnItemRequestDTO> getRequestsByNotRequestorId(Long idOwner, Integer from, Integer size) {
 
-        return requestStore.findAllByNotRequestorId(id, from, size).stream()
+        return requestStore.findAllByNotRequestorId(idOwner, from, size).stream()
                 .map(it -> ItemRequestDTO.Controller.Mapper.toDTO(it)).collect(Collectors.toList());
     }
 }
