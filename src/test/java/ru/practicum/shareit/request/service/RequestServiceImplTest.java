@@ -11,12 +11,9 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.HttpStatus;
 import ru.practicum.shareit.booking.model.Booking;
 import ru.practicum.shareit.booking.model.BookingStatus;
-import ru.practicum.shareit.booking.storage.BookingRepository;
 import ru.practicum.shareit.exceptions.HttpCustomException;
 import ru.practicum.shareit.item.model.Comment;
 import ru.practicum.shareit.item.model.Item;
-import ru.practicum.shareit.item.storage.CommentRepository;
-import ru.practicum.shareit.item.storage.ItemRepository;
 import ru.practicum.shareit.request.dto.ItemRequestDTO;
 import ru.practicum.shareit.request.model.ItemRequest;
 import ru.practicum.shareit.request.storage.RequestRepository;
@@ -35,15 +32,6 @@ import static org.mockito.ArgumentMatchers.any;
 
 @ExtendWith(MockitoExtension.class)
 class RequestServiceImplTest {
-
-    @Mock
-    private ItemRepository itemRepository;
-
-    @Mock
-    private BookingRepository bookingRepository;
-
-    @Mock
-    private CommentRepository commentRepository;
 
     @Mock
     private UserServiceImpl userService;
@@ -147,9 +135,6 @@ class RequestServiceImplTest {
     BookingStatus bookingStatus = BookingStatus.WAITING;
     LocalDateTime bookingStart = LocalDateTime.now().plusDays(2);
     LocalDateTime bookingEnd = LocalDateTime.now().plusDays(4);
-    BookingStatus bookingStatus2 = BookingStatus.APPROVED;
-    LocalDateTime bookingStart2 = LocalDateTime.now().plusDays(20);
-    LocalDateTime bookingEnd2 = LocalDateTime.now().plusDays(40);
     Long userId = 2L;
     Long userId2 = 11L;
     Long itemId = 25L;

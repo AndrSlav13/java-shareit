@@ -12,9 +12,6 @@ import javax.validation.constraints.Min;
 import java.util.List;
 import java.util.Optional;
 
-/**
- * TODO Sprint add-item-requests.
- */
 @RestController
 @RequestMapping(path = "/requests")
 @RequiredArgsConstructor

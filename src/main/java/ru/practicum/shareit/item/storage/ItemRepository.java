@@ -9,8 +9,6 @@ import java.util.List;
 import java.util.Optional;
 
 public interface ItemRepository extends JpaRepository<Item, Long> {
-    List<Item> findAllByOwnerId(Long id);
-
     Optional<Item> findItemById(Long id);
 
     List<Item> findByDescriptionContainsIgnoreCaseAndAvailableIsTrueOrNameContainsIgnoreCaseAndAvailableIsTrue(String text1, String text2, Pageable pag);

@@ -62,9 +62,7 @@ public enum BookingDTO {
             Long id;
             String start;
             String end;
-            //Long itemId;
             ItemDTO.Controller.ReturnItemDTO item;
-            //Long bookerId;
             UserDTO.Controller.ReturnUserDTO booker;
             String status;
         }
@@ -82,8 +80,6 @@ public enum BookingDTO {
                         .id(null)
                         .start(LocalDateTime.parse(dtoItem.start, format))
                         .end(LocalDateTime.parse(dtoItem.end, format))
-                        //.itemId(dtoItem.itemId)
-                        //.bookerId(dtoItem.bookerId)
                         .status(dtoItem.status == null || !BookingStatus.contains(dtoItem.status) ? BookingStatus.WAITING : BookingStatus.valueOf(dtoItem.status))
                         .build();
 

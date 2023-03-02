@@ -13,9 +13,6 @@ import javax.validation.constraints.NotEmpty;
 import java.util.List;
 import java.util.Optional;
 
-/**
- * TODO Sprint add-bookings.
- */
 @RestController
 @RequestMapping(path = "/bookings")
 @RequiredArgsConstructor

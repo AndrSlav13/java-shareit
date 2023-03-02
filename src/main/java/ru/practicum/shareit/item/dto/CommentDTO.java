@@ -27,7 +27,7 @@ public enum CommentDTO {
         @Data
         public static class NewCommentDTO implements Text {
             String text;
-            String notused;
+            String notused;  //С одним полем дто не работает. Пришлось добавить это не нужное.
         }
 
         @Builder

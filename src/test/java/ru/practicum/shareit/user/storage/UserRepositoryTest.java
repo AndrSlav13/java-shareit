@@ -194,8 +194,6 @@ class UserRepositoryTest {
                 .description(itemDescription).name(itemName).available(itemAvailable).build();
         Item item2 = Item.builder().requests(new ArrayList<>()).bookings(new ArrayList<>()).comments(new ArrayList<>())
                 .description(itemDescription2).name(itemName2).available(itemAvailable2).build();
-        Booking booking = Booking.builder().start(bookingStart).end(bookingEnd).status(bookingStatus).build();
-        Booking booking2 = Booking.builder().start(bookingStart).end(bookingEnd).status(bookingStatus).build();
 
         user = userRepository.save(user);
         user2 = userRepository.save(user2);
@@ -227,7 +225,6 @@ class UserRepositoryTest {
         Item item2 = Item.builder().requests(new ArrayList<>()).bookings(new ArrayList<>()).comments(new ArrayList<>())
                 .description(itemDescription2).name(itemName2).available(itemAvailable2).build();
         Booking booking = Booking.builder().start(bookingStart).end(bookingEnd).status(bookingStatus).build();
-        Booking booking2 = Booking.builder().start(bookingStart).end(bookingEnd).status(bookingStatus).build();
 
         user = userRepository.save(user);
         user2 = userRepository.save(user2);
@@ -260,8 +257,6 @@ class UserRepositoryTest {
                 .description(itemDescription).name(itemName).available(itemAvailable).build();
         Item item2 = Item.builder().requests(new ArrayList<>()).bookings(new ArrayList<>()).comments(new ArrayList<>())
                 .description(itemDescription2).name(itemName2).available(itemAvailable2).build();
-        Booking booking = Booking.builder().start(bookingStart).end(bookingEnd).status(bookingStatus).build();
-        Booking booking2 = Booking.builder().start(bookingStart).end(bookingEnd).status(bookingStatus).build();
 
         user = userRepository.save(user);
         user2 = userRepository.save(user2);
@@ -272,7 +267,6 @@ class UserRepositoryTest {
         final Long it1 = item.getId();
         final Long it2 = item2.getId();
         final Long us1 = user.getId();
-        final Long us2 = user2.getId();
 
         HttpCustomException e = assertThrows(HttpCustomException.class, () -> userRepository.isUserAbleToBook(it1, us1));
         assertThat(e.getCode()).isEqualTo(HttpStatus.NOT_FOUND.value());
@@ -299,27 +293,5 @@ class UserRepositoryTest {
     BookingStatus bookingStatus = BookingStatus.WAITING;
     LocalDateTime bookingStart = LocalDateTime.now().plusDays(2);
     LocalDateTime bookingEnd = LocalDateTime.now().plusDays(4);
-    BookingStatus bookingStatus2 = BookingStatus.APPROVED;
-    LocalDateTime bookingStart2 = LocalDateTime.now().plusDays(20);
-    LocalDateTime bookingEnd2 = LocalDateTime.now().plusDays(40);
-    Long userId = 2L;
-    Long userId2 = 11L;
-    Long itemId = 25L;
-    Long itemId2 = 7L;
-    Long bookingId = 13L;
-    Long bookingId2 = 14L;
-
-    Long requestId = 88L;
-    String requestDescription = "req desc";
-    LocalDateTime requestCreated = LocalDateTime.now();
-    Long requestId2 = 886L;
-    String requestDescription2 = "req2 desc";
-    LocalDateTime requestCreated2 = LocalDateTime.now().minusDays(8);
-    String commentText = "comment text";
-    Long commentId = 77L;
-    LocalDateTime commentCreated = LocalDateTime.now().minusDays(22);
-    String commentText2 = "comment text2";
-    Long commentId2 = 771L;
-    LocalDateTime commentCreated2 = LocalDateTime.now().minusDays(220);
 
 }

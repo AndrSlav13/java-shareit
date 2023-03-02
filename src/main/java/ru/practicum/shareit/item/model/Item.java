@@ -9,9 +9,6 @@ import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * TODO Sprint add-controllers.
- */
 //Data for table
 @Builder(toBuilder = true)
 @Getter

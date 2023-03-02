@@ -108,9 +108,6 @@ class RequestServiceImplTestIntegral {
     BookingStatus bookingStatus = BookingStatus.WAITING;
     LocalDateTime bookingStart = LocalDateTime.now().plusDays(2);
     LocalDateTime bookingEnd = LocalDateTime.now().plusDays(4);
-    BookingStatus bookingStatus2 = BookingStatus.APPROVED;
-    LocalDateTime bookingStart2 = LocalDateTime.now().plusDays(20);
-    LocalDateTime bookingEnd2 = LocalDateTime.now().plusDays(40);
     Long userId = 2L;
     Long userId2 = 11L;
     Long itemId = 25L;
