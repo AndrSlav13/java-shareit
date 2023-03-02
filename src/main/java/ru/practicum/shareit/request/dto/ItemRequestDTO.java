@@ -1,7 +1,9 @@
 package ru.practicum.shareit.request.dto;
 
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import ru.practicum.shareit.booking.dto.BookingDTO;
 import ru.practicum.shareit.item.dto.ItemDTO;
 import ru.practicum.shareit.request.model.ItemRequest;
@@ -25,10 +27,10 @@ public enum ItemRequestDTO {
 
         @Builder
         @Data
+        @NoArgsConstructor
+        @AllArgsConstructor
         public static class NewItemRequestDTO implements Description {
             String description;
-            String ihatetests;    //Если оставить только description, то почему-то не происходит десериализация в объект
-            //Т.е. пришлось вставить ненужный параметр. Также помогает убрать @Builder, но не хочется
         }
 
         @Builder

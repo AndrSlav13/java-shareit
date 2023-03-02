@@ -1,7 +1,9 @@
 package ru.practicum.shareit.item.dto;
 
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import ru.practicum.shareit.item.model.Comment;
 
 import javax.validation.constraints.NotNull;
@@ -25,9 +27,10 @@ public enum CommentDTO {
 
         @Builder
         @Data
+        @NoArgsConstructor
+        @AllArgsConstructor
         public static class NewCommentDTO implements Text {
             String text;
-            String notused;  //С одним полем дто не работает. Пришлось добавить это не нужное.
         }
 
         @Builder
