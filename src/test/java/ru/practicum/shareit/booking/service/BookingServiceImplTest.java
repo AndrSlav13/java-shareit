@@ -91,7 +91,7 @@ class BookingServiceImplTest {
 
         userMockStatic.verify(() -> UserService.validate(Mockito.any(User.class)), Mockito.times(1));
         bookingMockStatic.verify(() -> BookingService.validate(Mockito.any(Booking.class)), Mockito.times(1));
-        assertEquals(BookingStatus.APPROVED.name(), booking1.getStatus().toString());
+        assertEquals(BookingStatus.APPROVED.name(), booking1.getStatus());
         userMockStatic.close();
         bookingMockStatic.close();
 
@@ -103,7 +103,7 @@ class BookingServiceImplTest {
                 .when(bookingRepository.findById(Mockito.anyLong()))
                 .thenReturn(Optional.of(booking.toBuilder().status(BookingStatus.WAITING).build()));
         booking1 = bookingService.setApprove(booking.getId(), userId, "false");
-        assertEquals(BookingStatus.REJECTED.name(), booking1.getStatus().toString());
+        assertEquals(BookingStatus.REJECTED.name(), booking1.getStatus());
 
         Mockito
                 .when(userService.isUserOwner(Mockito.anyLong(), Mockito.anyLong()))
@@ -155,14 +155,14 @@ class BookingServiceImplTest {
                 .thenReturn(user.toBuilder().bookings(new ArrayList<>()).build());
 
         MockedStatic<UserService> userMockStatic = Mockito.mockStatic(UserService.class);
-        List<BookingDTO.Controller.ReturnBookItemDTO> booking1 = bookingService.findByBooker(userId, BookingStateForOutput.CURRENT.toString(), 0, 1);
+        List<BookingDTO.Controller.ReturnBookItemDTO> booking1 = bookingService.findByBooker(userId, BookingStateForOutput.CURRENT, 0, 1);
 
         userMockStatic.verify(() -> UserService.validate(Mockito.any(User.class)), Mockito.times(1));
         assertEquals(booking.getId(), booking1.get(0).getId());
         userMockStatic.close();
 
         HttpCustomException ex = assertThrows(HttpCustomException.class,
-                () -> bookingService.findByBooker(userId, "", 0, 1));
+                () -> bookingService.findByBooker(userId, null, 0, 1));
         assertEquals(HttpStatus.INTERNAL_SERVER_ERROR.value(), ex.getCode());
     }
 
@@ -176,14 +176,14 @@ class BookingServiceImplTest {
                 .thenReturn(user.toBuilder().bookings(new ArrayList<>()).build());
 
         MockedStatic<UserService> userMockStatic = Mockito.mockStatic(UserService.class);
-        List<BookingDTO.Controller.ReturnBookItemDTO> booking1 = bookingService.findByOwner(userId, BookingStateForOutput.CURRENT.toString(), 0, 1);
+        List<BookingDTO.Controller.ReturnBookItemDTO> booking1 = bookingService.findByOwner(userId, BookingStateForOutput.CURRENT, 0, 1);
 
         userMockStatic.verify(() -> UserService.validate(Mockito.any(User.class)), Mockito.times(1));
         assertEquals(booking.getId(), booking1.get(0).getId());
         userMockStatic.close();
 
         HttpCustomException ex = assertThrows(HttpCustomException.class,
-                () -> bookingService.findByOwner(userId, "", 0, 1));
+                () -> bookingService.findByOwner(userId, null, 0, 1));
         assertEquals(HttpStatus.INTERNAL_SERVER_ERROR.value(), ex.getCode());
     }
 

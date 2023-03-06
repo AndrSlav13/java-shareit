@@ -2,60 +2,59 @@ package ru.practicum.shareit.booking.controller;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.shareit.booking.dto.BookingDTO;
+import ru.practicum.shareit.booking.model.BookingStateForOutput;
 import ru.practicum.shareit.booking.service.BookingService;
 import ru.practicum.shareit.exceptions.HttpCustomException;
 
 import javax.validation.Valid;
-import javax.validation.constraints.Min;
-import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.*;
 import java.util.List;
 import java.util.Optional;
 
 @RestController
 @RequestMapping(path = "/bookings")
 @RequiredArgsConstructor
+@Validated
 public class BookingController {
     private final BookingService bookingService;
 
     @PostMapping
     public BookingDTO.Controller.ReturnBookItemDTO addBooking(@RequestBody @Valid BookingDTO.Controller.NewBookItemDTO bookItemDTO,
-                                                              @RequestHeader("X-Sharer-User-Id") Optional<Long> bookerId) {
-        return bookingService.addItem(BookingDTO.Controller.Mapper.toBooking(bookItemDTO), bookerId.get(), bookItemDTO.getItemId());
+                                                              @NotNull @Positive @RequestHeader("X-Sharer-User-Id") Long bookerId) {
+        return bookingService.addItem(BookingDTO.Controller.Mapper.toBooking(bookItemDTO), bookerId, bookItemDTO.getItemId());
     }
 
     @PatchMapping(path = "/{bookingId}")
-    public BookingDTO.Controller.ReturnBookItemDTO setApproved(@PathVariable Long bookingId,
-                                                               @RequestHeader("X-Sharer-User-Id") Optional<Long> bookerId,
-                                                               @RequestParam @Valid @NotEmpty String approved) {
-        return bookingService.setApprove(bookingId,
-                bookerId.get(),
-                approved
-        );
+    public BookingDTO.Controller.ReturnBookItemDTO setApproved(@NotNull @Positive @PathVariable Long bookingId,
+                                                               @NotNull @Positive @RequestHeader("X-Sharer-User-Id") Long bookerId,
+                                                               @Pattern(regexp = "(?i)^trUe$|^faLse$") @RequestParam String approved) {
+        return bookingService.setApprove(bookingId, bookerId, approved);
     }
 
     @GetMapping(path = "/{bookingId}")
-    public BookingDTO.Controller.ReturnBookItemDTO getBooking(@PathVariable Long bookingId,
-                                                              @RequestHeader("X-Sharer-User-Id") Optional<Long> bookerId) {
-        return bookingService.findByIdAndBookerOrIdAndOwner(bookingId, bookerId.get());
+    public BookingDTO.Controller.ReturnBookItemDTO getBooking(@NotNull @Positive @PathVariable Long bookingId,
+                                                              @NotNull @Positive @RequestHeader("X-Sharer-User-Id") Long bookerId) {
+        return bookingService.findByIdAndBookerOrIdAndOwner(bookingId, bookerId);
     }
 
     @GetMapping
-    public List<BookingDTO.Controller.ReturnBookItemDTO> getBookingsOfUser(@RequestHeader("X-Sharer-User-Id") Optional<Long> bookerId,
-                                                                           @RequestParam(defaultValue = "ALL") @Valid @NotEmpty String state,
-                                                                           @RequestParam(defaultValue = "0") Integer from,
-                                                                           @RequestParam(defaultValue = "10") @Min(1) Integer size) {
-        if (size < 1) throw new HttpCustomException(HttpStatus.BAD_REQUEST, "Wrong page size");
-        return bookingService.findByBooker(bookerId.get(), state, from, size);
+    public List<BookingDTO.Controller.ReturnBookItemDTO> getBookingsOfUser(@NotNull @Positive @RequestHeader("X-Sharer-User-Id") Long bookerId,
+                                                                           @RequestParam(defaultValue = "ALL") String state,
+                                                                           @PositiveOrZero @RequestParam(defaultValue = "0") Integer from,
+                                                                           @Positive @RequestParam(defaultValue = "10") Integer size) {
+        BookingStateForOutput st = BookingStateForOutput.vOf(state);
+        return bookingService.findByBooker(bookerId, st, from, size);
     }
 
     @GetMapping(path = "/owner")
-    public List<BookingDTO.Controller.ReturnBookItemDTO> getBookingsOfOwner(@RequestHeader("X-Sharer-User-Id") Optional<Long> bookerId,
-                                                                            @RequestParam(defaultValue = "ALL") @Valid @NotEmpty String state,
-                                                                            @RequestParam(defaultValue = "0") Integer from,
-                                                                            @RequestParam(defaultValue = "10") @Min(1) Integer size) {
-        if (size < 1) throw new HttpCustomException(HttpStatus.BAD_REQUEST, "Wrong page size");
-        return bookingService.findByOwner(bookerId.get(), state, from, size);
+    public List<BookingDTO.Controller.ReturnBookItemDTO> getBookingsOfOwner(@NotNull @Positive @RequestHeader("X-Sharer-User-Id") Long bookerId,
+                                                                            @RequestParam(defaultValue = "ALL") String state,
+                                                                            @PositiveOrZero @RequestParam(defaultValue = "0") Integer from,
+                                                                            @Positive @RequestParam(defaultValue = "10") Integer size) {
+        BookingStateForOutput st = BookingStateForOutput.vOf(state);
+        return bookingService.findByOwner(bookerId, st, from, size);
     }
 }
