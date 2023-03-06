@@ -27,21 +27,21 @@ public class ItemRequestController {
 
     @GetMapping
     public ResponseEntity<Object> getRequestsOfUser(@NotNull @Positive @RequestHeader("X-Sharer-User-Id") Long idOwner,
-                                              @PositiveOrZero @RequestParam(defaultValue = "0") Integer from,
-                                              @Positive @RequestParam(defaultValue = "10") Integer size) {
+                                                    @PositiveOrZero @RequestParam(defaultValue = "0") Integer from,
+                                                    @Positive @RequestParam(defaultValue = "10") Integer size) {
         return requestClient.getRequestsOfUser(idOwner, from, size);
     }
 
     @GetMapping(path = "/{id}")
     public ResponseEntity<Object> getRequestById(@NotNull @Positive @RequestHeader("X-Sharer-User-Id") Long idOwner,
-                                                                         @NotNull @Positive @PathVariable Long id) {
+                                                 @NotNull @Positive @PathVariable Long id) {
         return requestClient.getRequest(idOwner, id);
     }
 
     @GetMapping(path = "/all")    //Список запросов других пользователей
     public ResponseEntity<Object> getRequestsOfNotUser(@NotNull @Positive @RequestHeader("X-Sharer-User-Id") Long idOwner,
-                                                                            @PositiveOrZero @RequestParam(defaultValue = "0") Integer from,
-                                                                            @Positive @RequestParam(defaultValue = "10") Integer size) {
+                                                       @PositiveOrZero @RequestParam(defaultValue = "0") Integer from,
+                                                       @Positive @RequestParam(defaultValue = "10") Integer size) {
 
         return requestClient.getRequestsOfNotUser(idOwner, from, size);
     }

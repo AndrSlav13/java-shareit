@@ -12,9 +12,7 @@ import ru.practicum.shareit.booking.dto.BookingDTO;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 //enum т.к. внутренний класс не сможет быть иначе static (если class вместо static).
 // А если не static, то надо создавать экземпляры внешних классов - enum здесь это namespace

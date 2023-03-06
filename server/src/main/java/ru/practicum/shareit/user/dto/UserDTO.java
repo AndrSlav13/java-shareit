@@ -38,7 +38,7 @@ public enum UserDTO {
 
         @Data
         @Builder
-        public static class ReturnUserDTO{
+        public static class ReturnUserDTO {
             private Long id;
             private String name;
             private String email;
