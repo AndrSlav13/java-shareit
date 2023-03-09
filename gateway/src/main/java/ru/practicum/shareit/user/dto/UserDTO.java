@@ -31,8 +31,8 @@ public enum UserDTO {
         @Getter
         @Setter
         public static class UpdateUserDTO {
-            private String name;
-            private String email;
+            String name;
+            String email;
 
             public UpdateUserDTO(String name, String email) {
                 this.email = email;
@@ -52,9 +52,9 @@ public enum UserDTO {
         @Data
         @Builder
         public static class ReturnUserDTO implements Email {
-            private Long id;
-            private String name;
-            private String email;
+            Long id;
+            String name;
+            String email;
         }
 
     }
