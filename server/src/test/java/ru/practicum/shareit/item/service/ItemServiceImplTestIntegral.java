@@ -118,6 +118,7 @@ class ItemServiceImplTestIntegral {
                         .booker(user2)
                         .start(LocalDateTime.now().plusSeconds(1))
                         .end(LocalDateTime.now().plusSeconds(2))
+                        .status(BookingStatus.APPROVED)
                         .build(),
                 userId2, itemId).getId();
 

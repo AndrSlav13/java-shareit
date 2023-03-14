@@ -187,8 +187,8 @@ public class BookingRepositoryTest {
                 .description(itemDescription).name(itemName).available(itemAvailable).build();
         Item item2 = Item.builder().requests(new ArrayList<>()).bookings(new ArrayList<>()).comments(new ArrayList<>())
                 .description(itemDescription2).name(itemName2).available(itemAvailable2).build();
-        Booking booking = Booking.builder().start(bookingStart).end(bookingEnd).status(BookingStatus.WAITING).build();
-        Booking booking2 = Booking.builder().start(bookingStart).end(bookingEnd).status(BookingStatus.WAITING).build();
+        Booking booking = Booking.builder().start(bookingStart).end(bookingEnd).status(BookingStatus.APPROVED).build();
+        Booking booking2 = Booking.builder().start(bookingStart).end(bookingEnd).status(BookingStatus.APPROVED).build();
 
         user = userRepository.save(user);
         user2 = userRepository.save(user2);
