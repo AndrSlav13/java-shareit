@@ -27,15 +27,15 @@ public class DateTimeConstrainValidator
 
         Instant startI = null;
         Instant endI = null;
-        if (fieldValueStart.equals(null)) return false;
+        if (fieldValueStart == null) return false;
         else {
             startI = BookingDTO.stringToInstant((String) fieldValueStart);
             if (startI.isBefore(Instant.now())) return false;
         }
-        if (fieldValueEnd.equals(null)) return false;
+        if (fieldValueEnd == null) return false;
         else {
             endI = BookingDTO.stringToInstant((String) fieldValueEnd);
-            if (startI.isAfter(endI)) return false;
+            if (startI.isAfter(endI) || startI.equals(endI)) return false;
         }
         return true;
     }

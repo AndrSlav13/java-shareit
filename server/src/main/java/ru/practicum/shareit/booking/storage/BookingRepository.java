@@ -21,7 +21,8 @@ public interface BookingRepository extends JpaRepository<Booking, Long>, Booking
             "select max(b.start) " +
             "from Booking as b " +
             "where b.booked.id = booking.booked.id " +
-            "and b.start < :time ) ")
+            "and b.start < :time " +
+            "and b.status = 'APPROVED' ) ")
     List<Booking> findLastBookings(@Param("ownerId") Long ownerId, @Param("ids") List<Long> ids, @Param("time") LocalDateTime time);
 
     @Query("select booking from Booking as booking " +
@@ -31,6 +32,7 @@ public interface BookingRepository extends JpaRepository<Booking, Long>, Booking
             "select min(b.start) " +
             "from Booking as b " +
             "where b.booked.id = booking.booked.id " +
-            "and b.start > :time ) ")
+            "and b.start > :time " +
+            "and b.status = 'APPROVED' ) ")
     List<Booking> findNextBookings(@Param("ownerId") Long ownerId, @Param("ids") List<Long> ids, @Param("time") LocalDateTime time);
 }
